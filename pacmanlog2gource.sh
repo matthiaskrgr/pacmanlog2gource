@@ -88,19 +88,6 @@ else
 fi
 
 
-echo "${VERSION}" >> ${DATADIR}/version
-COMPATIBLE="0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.7.1, 1.7.2, 1.7.5, 1.7.6, 1.8, 1.8.1, 1.8.2, 1.8.3"
-if [[ `awk '! /0\.8|0\.9|1\.0|1\.1|1\.2|1\.3|1\.4|1\.5|1\.6|1\.7|1\.7\.1|1\.7\.2|1\.7\.5|1\.7\.6|1\.8|1\.8\.1|1\.8\.2|\1\.8\.3/' ${DATADIR}/version` ]] ; then
-	if [[ $(echo "$*") == *c* ]] ; then
-		echo "Due to some slight changes in logfile generation, it is recommended to delete the files in ${DATADIR}/ and re-run this script." >&2
-	else
-		echo -e "Due to some slight changes in logfile generation, it is recommended to delete the files in ${WHITEUL}${DATADIR}/${NC} and re-run this script." >&2
-	fi
-	sleep 4
-	echo "Exiting..." >&2
-	exit 2
-fi
-
 # create empty logfile if non exists
 if [ ! -f ${LOGNOW} ] ; then
 	touch ${LOGNOW}
@@ -212,7 +199,7 @@ makelog() {
 				PKG=lxde/${PKG}.lxde
 			elif [[ "${PKG}" == ^lx* ]]			 ; then
 				PKG=lxde/${PKG}.lxde
-			elif [[ "${PKG}" == *php* ]]		 ; then
+			elif [[ "${PKG}" == *php* ]]		 ; then 
 				PKG=php/${PKG}.php
 			elif [[ "${PKG}" == *alsa* ]]		 ; then
 				PKG=alsa/${PKG}.alsa
