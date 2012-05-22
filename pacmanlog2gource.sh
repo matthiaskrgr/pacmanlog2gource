@@ -72,7 +72,20 @@ fi
 # create a checksum of the log-generating part of the script
 PATHTOSCRIPT=$0
 COMPATIBILITY_CHECKSUM=`cat ${PATHTOSCRIPT} | sed -e '/COMPATIBILITY_CHECKSUM/d' | awk '/#checksumstart/,/#checksumstop/' | md5sum | cut -d' ' -f1`
-echo $COMPATIBILITY_CHECKSUM
+OLD_CHECKSUM_FILE=${DATADIR}/checksum
+OLD_CHECKSUM=`cat ${OLD_CHECKSUM_FILE}`
+if [ ! -f "${OLD_CHECKSUM_FILE}" ] ; then
+	echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
+else
+	if [[ ${OLD_CHECKSUM} == ${COMPATIBILITY_CHECKSUM} ]] ; then
+		:
+	else
+		echo "Logfile generation has changed!"
+		echo "To avoid imcompatibility, the log is now regenerated!"
+		rm ${LOGNOW} ${LOG} ${DATADIR}/pacman_gource_pie.log
+		echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
+	fi
+fi
 
 
 echo "${VERSION}" >> ${DATADIR}/version
