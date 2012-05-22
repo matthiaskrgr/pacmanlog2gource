@@ -380,13 +380,20 @@ done
 	TITLE="Pacmanlog2gource${LOGTIMES}${HOSTNAME}${ARCH}"
 
 if [ ${INFORMATION} == "true" ] ; then
-	echo "The default command which will be run using pacmanlog2gource -g is"
-	echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2${NC}"
-	echo "If you run -f, this is appended:"
-	echo -e "${GREEN}--output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
+	if [ "$*" == "-i" ] ; then
+		ARGS=""
+	else
+		ARGS="`sed -e 's/i//' <( echo "${*}" )` "
+	fi
+	echo -e "The command which will be run using ${GREEN}pacmanlog2gource ${ARGS}${NC}is"
+	if [ ${FFMPEGPOST} != "true" ] ; then
+		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2${NC}"
+	else
+		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
+	fi
 	echo -e "Logfiles are stored in ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC} and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}."
 	echo -e "Log format of current version ${VERSION} compatible with versions \n${COMPATIBLE}"
-	echo -e "Gource: ${gourcename_version}"
+	echo -e "Gource version: ${gourcename_version}"
 	exit 0
 fi
 
