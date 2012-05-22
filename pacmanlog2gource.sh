@@ -199,7 +199,7 @@ makelog() {
 				PKG=lxde/${PKG}.lxde
 			elif [[ "${PKG}" == ^lx* ]]			 ; then
 				PKG=lxde/${PKG}.lxde
-			elif [[ "${PKG}" == *php* ]]		 ; then 
+			elif [[ "${PKG}" == *php* ]]		 ; then
 				PKG=php/${PKG}.php
 			elif [[ "${PKG}" == *alsa* ]]		 ; then
 				PKG=alsa/${PKG}.alsa
