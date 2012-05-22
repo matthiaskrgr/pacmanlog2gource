@@ -69,7 +69,12 @@ if [ ! -d "${DATADIR}" ] ; then
 	fi
 fi
 
-# print the version into a file so we can handle file formats being out of date properly later
+# create a checksum of the log-generating part of the script
+PATHTOSCRIPT=$0
+COMPATIBILITY_CHECKSUM=`cat ${PATHTOSCRIPT} | sed -e '/COMPATIBILITY_CHECKSUM/d' | awk '/#checksumstart/,/#checksumstop/' | md5sum | cut -d' ' -f1`
+echo $COMPATIBILITY_CHECKSUM
+
+
 echo "${VERSION}" >> ${DATADIR}/version
 COMPATIBLE="0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.7.1, 1.7.2, 1.7.5, 1.7.6, 1.8, 1.8.1, 1.8.2, 1.8.3"
 if [[ `awk '! /0\.8|0\.9|1\.0|1\.1|1\.2|1\.3|1\.4|1\.5|1\.6|1\.7|1\.7\.1|1\.7\.2|1\.7\.5|1\.7\.6|1\.8|1\.8\.1|1\.8\.2|\1\.8\.3/' ${DATADIR}/version` ]] ; then
@@ -153,6 +158,7 @@ makelog() {
 		IFS=$'\n'
 		set -f
 		for i in $(<${DATADIR}/tmp); do
+#checksumstart
 			# the unix time string
 			UNIXDATE=`date +"%s" -d "${i:1:16}"`
 			# put  installed/removed/upgraded information in there again, we translated these later with sed in one rush
@@ -222,7 +228,7 @@ makelog() {
 
 			#    write the important stuff into our logfile
 			echo "${UNIXDATE}|root|${STATE}|${PKG}" >> ${DATADIR}/pacman_gource_tree.log
-
+#checksumstop
 			#    here we print how log the script already took to run and try to estimate how log it will run until everything is done
 			#    but we only update this every 1000 lines to avoid unnecessary stdout spamming
 			#    this will mostly be printed when initially obtaining the log
