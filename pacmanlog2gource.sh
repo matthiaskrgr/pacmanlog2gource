@@ -303,6 +303,9 @@ logend=`date +"%d %b %Y" -d "${logenddate}"`
 
 cpucores=`getconf _NPROCESSORS_ONLN`
 
+gourcebinarypath=`whereis gource | cut -d' ' -f2`
+gourcename_version=`pacman -Qo ${gourcebinarypath} | cut -d' ' -f"5 6"`
+
 LOGTIMES=", ${logbeginning} - ${logend}"
 HOSTNAME=", hostname: `hostname`"
 ARCH=", `uname -m`"
@@ -383,6 +386,7 @@ if [ ${INFORMATION} == "true" ] ; then
 	echo -e "${GREEN}--output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
 	echo -e "Logfiles are stored in ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC} and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}."
 	echo -e "Log format of current version ${VERSION} compatible with versions \n${COMPATIBLE}"
+	echo -e "Gource: ${gourcename_version}"
 	exit 0
 fi
 
