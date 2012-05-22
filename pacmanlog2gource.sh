@@ -159,22 +159,34 @@ makelog() {
 			STATE=`cut -d' ' -f3 <( echo ${i} )`
 			# package name
 			PKG=`cut -d' ' -f4  <( echo ${i} )`
-			if [[ "${PKG}" == *lib* ]] ; then
-				if [[ "${PKG}" == *libreoffice* ]] ; then
-					PKG=libreoffice/${PKG}.libreoffice
+			if [[ "${PKG}" == lib* ]] ; then
+				if [[ "${PKG}" == libreoffice* ]] ; then
+					if [[ "${PKG}" == *extension* ]] ; then
+						PKG=libreoffice/extension/${PKG}.libreoffice
+					else
+						PKG=libreoffice/${PKG}.libreoffice
+					fi
 				else
-					PKG=lib/${PKG}.lib
+					if [[ "${PKG}" == *32* ]]	; then
+						PKG=lib/32/${PKG}.lib
+					else
+						PKG=lib/${PKG}.lib
+					fi
 				fi
 			elif [[ "${PKG}" == *xorg* ]]		 ; then
 				PKG=xorg/${PKG}.xorg
 			elif [[ "${PKG}" == *ttf* ]]		 ; then
 				PKG=ttf/${PKG}.ttf
 			elif [[ "${PKG}" == *xfce* ]]		 ; then
-				PKG=xfce/${PKG}.xfce
+				if [[ "${PKG}" == *plugin* ]]	 ; then
+					PKG=xfce/plugins/${PKG}.xfce
+				else
+					PKG=xfce/${PKG}.xfce
+				fi
 			elif [[ "${PKG}" == *sdl* ]]		 ; then
 				PKG=sdl/${PKG}.sdl
 			elif [[ "${PKG}" == *xf86* ]]		 ; then
-				PKG=xf86/${PKG}.xf86
+				PKG=xorg/xf86/${PKG}.xorg
 			elif [[ "${PKG}" == *perl* ]]		 ; then
 				PKG=perl/${PKG}.perl
 			elif [[ "${PKG}" == *gnome* ]]		 ; then
@@ -191,7 +203,7 @@ makelog() {
 				PKG=python/${PKG}.python
 			elif [[ "${PKG}" == *lxde* ]]		 ; then
 				PKG=lxde/${PKG}.lxde
-			elif [[ "${PKG}" == ^lx* ]]			 ; then
+			elif [[ "${PKG}" == lx* ]]			 ; then
 				PKG=lxde/${PKG}.lxde
 			elif [[ "${PKG}" == *php* ]]		 ; then
 				PKG=php/${PKG}.php
@@ -201,8 +213,14 @@ makelog() {
 				PKG=compiz/${PKG}.compiz
 			elif [[ "${PKG}" == *dbus* ]]		 ; then
 				PKG=dbus/${PKG}.dbus
-			elif [[ "${PKG}" == *gambas* ]]		 ; then
-				PKG=gambas/${PKG}.gambas
+			elif [[ "${PKG}" == gambas* ]]		 ; then
+				if 		[[ "${PKG}" == gambas2* ]] ; then
+					PKG=gambas/2/${PKG}.gambas
+				elif 	[[ "{PKG}" == gambas3* ]] ; then
+					PKG=gambas/3/${PKG}.gambas
+				else
+					PKG=gambas/${PKG}.gambas
+				fi
 			elif [[ "${PKG}" == *qt* ]]			 ; then
 				PKG=qt/${PKG}.qt
 			elif [[ "${PKG}" == *firefox* ]]	 ; then
