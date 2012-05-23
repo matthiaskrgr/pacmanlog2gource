@@ -213,7 +213,41 @@ makelog() {
 			elif [[ "${PKG}" == *gstreamer* ]]	 ; then
 				PKG=gstreamer/${PKG}.gstreamer
 			elif [[ "${PKG}" == *kde* ]]		 ; then
-				PKG=kde/${PKG}.kde
+				if [[ "${PKG}" == *kdegames* ]] ; then
+					PKG=kde/games/${PKG}.kde
+				elif [[ "${PKG}" == *kdeaccessibility* ]] ; then
+					PKG=kde/accessebility/${PKG}.kde
+				elif [[ "${PKG}" == *kdeadmin* ]] ; then
+					PKG=kde/admin/${PKG}.kde
+				elif [[ "${PKG}" == *kdeartwork* ]] ; then
+					PKG=kde/artwork/${PKG}.kde
+				elif [[ "${PKG}" == *kdebase* ]] ; then
+					PKG=kde/base/${PKG}.kde
+				elif [[ "${PKG}" == *kdeedu* ]] ; then
+					PKG=kde/edu/${PKG}.kde
+				elif [[ "${PKG}" == *kdegames* ]] ; then
+					PKG=kde/games/${PKG}.kde
+				elif [[ "${PKG}" == *kdegraphics* ]] ; then
+					PKG=kde/graphics/${PKG}.kde
+				elif [[ "${PKG}" == *kdemultimedia* ]] ; then
+					PKG=kde/multimedia/${PKG}.kde
+				elif [[ "${PKG}" == *kdenetwork* ]] ; then
+					PKG=kde/network/${PKG}.kde
+				elif [[ "${PKG}" == *kdepim* ]] ; then
+					PKG=kde/pim/${PKG}.kde
+				elif [[ "${PKG}" == *kdeplasma* ]] ; then
+					PKG=kde/plasma/${PKG}.kde
+				elif [[ "${PKG}" == *kdesdk* ]] ; then
+					PKG=kde/sdk/${PKG}.kde
+				elif [[ "${PKG}" == *kdetoys* ]] ; then
+					PKG=kde/toys/${PKG}.kde
+				elif [[ "${PKG}" == *kdeutils* ]] ; then
+					PKG=kde/utils/${PKG}.kde
+				elif [[ "${PKG}" == *kdewebdev* ]] ; then
+					PKG=kde/webdev/${PKG}.kde
+				else
+					PKG=kde/${PKG}.kde
+				fi
 			elif [[ "${PKG}" == *python* ]]		 ; then
 				PKG=python/${PKG}.python
 			elif [[ "${PKG}" == *py* ]]			 ; then
