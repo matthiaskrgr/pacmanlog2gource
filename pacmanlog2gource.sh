@@ -69,19 +69,24 @@ if [ ! -d "${DATADIR}" ] ; then
 	fi
 fi
 
-# print the version into a file so we can handle file formats being out of date properly later
-echo "${VERSION}" >> ${DATADIR}/version
-COMPATIBLE="0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.7.1, 1.7.2, 1.7.5, 1.7.6, 1.8, 1.8.1, 1.8.2, 1.8.3"
-if [[ `awk '! /0\.8|0\.9|1\.0|1\.1|1\.2|1\.3|1\.4|1\.5|1\.6|1\.7|1\.7\.1|1\.7\.2|1\.7\.5|1\.7\.6|1\.8|1\.8\.1|1\.8\.2|\1\.8\.3/' ${DATADIR}/version` ]] ; then
-	if [[ $(echo "$*") == *c* ]] ; then
-		echo "Due to some slight changes in logfile generation, it is recommended to delete the files in ${DATADIR}/ and re-run this script." >&2
+# create a checksum of the log-generating part of the script
+PATHTOSCRIPT=$0
+COMPATIBILITY_CHECKSUM=`cat ${PATHTOSCRIPT} | sed -e '/COMPATIBILITY_CHECKSUM/d' | awk '/#checksumstart/,/#checksumstop/' | md5sum | cut -d' ' -f1`
+OLD_CHECKSUM_FILE=${DATADIR}/checksum
+OLD_CHECKSUM=`cat ${OLD_CHECKSUM_FILE}`
+if [ ! -f "${OLD_CHECKSUM_FILE}" ] ; then
+	echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
+else
+	if [[ ${OLD_CHECKSUM} == ${COMPATIBILITY_CHECKSUM} ]] ; then
+		:
 	else
-		echo -e "Due to some slight changes in logfile generation, it is recommended to delete the files in ${WHITEUL}${DATADIR}/${NC} and re-run this script." >&2
+		echo "Logfile generation has changed!"
+		echo "To avoid imcompatibility, the log is now regenerated!"
+		rm ${LOGNOW} ${LOG} ${DATADIR}/pacman_gource_pie.log
+		echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
 	fi
-	sleep 4
-	echo "Exiting..." >&2
-	exit 2
 fi
+
 
 # create empty logfile if non exists
 if [ ! -f ${LOGNOW} ] ; then
@@ -153,6 +158,7 @@ makelog() {
 		IFS=$'\n'
 		set -f
 		for i in $(<${DATADIR}/tmp); do
+#checksumstart
 			# the unix time string
 			UNIXDATE=`date +"%s" -d "${i:1:16}"`
 			# put  installed/removed/upgraded information in there again, we translated these later with sed in one rush
@@ -240,7 +246,7 @@ makelog() {
 
 			#    write the important stuff into our logfile
 			echo "${UNIXDATE}|root|${STATE}|${PKG}" >> ${DATADIR}/pacman_gource_tree.log
-
+#checksumstop
 			#    here we print how log the script already took to run and try to estimate how log it will run until everything is done
 			#    but we only update this every 1000 lines to avoid unnecessary stdout spamming
 			#    this will mostly be printed when initially obtaining the log
@@ -410,7 +416,7 @@ if [ ${INFORMATION} == "true" ] ; then
 		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
 	fi
 	echo -e "Logfiles are stored in ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC} and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}."
-	echo -e "Log format of current version ${VERSION} compatible with versions \n${COMPATIBLE}"
+	echo -e "Pacmanlog2gource version: ${VERSION}"
 	echo -e "Gource version: ${gourcename_version}"
 	exit 0
 fi
