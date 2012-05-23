@@ -69,14 +69,19 @@ if [ ! -d "${DATADIR}" ] ; then
 	fi
 fi
 
+
 # create a checksum of the log-generating part of the script
 PATHTOSCRIPT=$0
 COMPATIBILITY_CHECKSUM=`cat ${PATHTOSCRIPT} | sed -e '/COMPATIBILITY_CHECKSUM/d' | awk '/#checksumstart/,/#checksumstop/' | md5sum | cut -d' ' -f1`
 OLD_CHECKSUM_FILE=${DATADIR}/checksum
-OLD_CHECKSUM=`cat ${OLD_CHECKSUM_FILE}`
-if [ ! -f "${OLD_CHECKSUM_FILE}" ] ; then
-	echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
-else
+OLD_CHECKSUM=`touch ${OLD_CHECKSUM_FILE} ; cat ${OLD_CHECKSUM_FILE}`
+
+if [ -f ${DATADIR}/version ] ; then
+	rm ${DATADIR}/version
+	OLD_CHECKSUM="icanhazregenerationplz"
+fi
+
+if [ ! -z ${OLD_CHECKSUM} ] ; then
 	if [[ ${OLD_CHECKSUM} == ${COMPATIBILITY_CHECKSUM} ]] ; then
 		:
 	else
@@ -87,11 +92,12 @@ else
 			echo -e "${RED}Logfile generation has changed!${NC}"
 			echo -e "${RED}To avoid incompatibility, the log is now regenerated!${NC}"
 		fi
-		rm ${LOGNOW} ${LOG} ${DATADIR}/pacman_gource_pie.log
+		rm ${LOGNOW} ${LOG}
 		echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
 	fi
+else
+	echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
 fi
-
 
 # create empty logfile if non exists
 if [ ! -f ${LOGNOW} ] ; then
