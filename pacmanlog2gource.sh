@@ -258,6 +258,10 @@ makelog() {
 				PKG=lxde/${PKG}.lxde
 			elif [[ "${PKG}" == *php* ]]		 ; then
 				PKG=php/${PKG}.php
+			elif [[ "${PKG}" == vim* ]]			 ; then
+				PKG=vim/${PKG}.vim
+			elif [[ "${PKG}" == *texlive* ]]	 ; then
+				PKG=texlive/${PKG}.texlive
 			elif [[ "${PKG}" == *alsa* ]]		 ; then
 				PKG=alsa/${PKG}.alsa
 			elif [[ "${PKG}" == *compiz* ]]		 ; then
