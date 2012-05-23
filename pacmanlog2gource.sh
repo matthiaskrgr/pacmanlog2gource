@@ -411,6 +411,8 @@ if [ ${INFORMATION} == "true" ] ; then
 	echo -e "Logfiles are stored in ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC} and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}."
 	echo -e "Pacmanlog2gource version: ${VERSION}"
 	echo -e "Gource version: ${gourcename_version}"
+	echo "Feel free to comment https://bbs.archlinux.org/viewtopic.php?pid=1105145"
+	echo "or fork https://github.com/matthiaskrgr/pacmanlog2gource"
 	exit 0
 fi
 
