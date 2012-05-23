@@ -80,8 +80,13 @@ else
 	if [[ ${OLD_CHECKSUM} == ${COMPATIBILITY_CHECKSUM} ]] ; then
 		:
 	else
-		echo "Logfile generation has changed!"
-		echo "To avoid imcompatibility, the log is now regenerated!"
+		if [[ `echo "$*" | grep -o "^-.[^\ ]*c\|\-c"` ]] ; then
+			echo "Logfile generation has changed!"
+			echo "To avoid incompatibility, the log is now regenerated!"
+		else
+			echo -e "${RED}Logfile generation has changed!${NC}"
+			echo -e "${RED}To avoid incompatibility, the log is now regenerated!${NC}"
+		fi
 		rm ${LOGNOW} ${LOG} ${DATADIR}/pacman_gource_pie.log
 		echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
 	fi
