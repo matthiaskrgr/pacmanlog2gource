@@ -330,13 +330,7 @@ makelog() {
 				*qt*)
 					PKG=qt/${PKG}.qt
 					;;
-				*firefox*)
-					PKG=mozilla/${PKG}.mozilla
-					;;
-				*thunderbird*)
-					PKG=mozilla/${PKG}.mozilla
-					;;
-				*seamonky*)
+				*firefox*|*thunderbird*|*seamonky*)
 					PKG=mozilla/${PKG}.mozilla
 					;;
 				*)
