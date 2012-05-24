@@ -82,7 +82,7 @@ if [ -f ${DATADIR}/version ] ; then
 fi
 
 
-if [[ ! `echo "$*" | grep -o "^-.[^\ ]*n\|\-n\|^-.[^\ ]*h\|\-h\|^-.[^\ ]*i\|-i"` ]] ; then
+if [[ ! `echo - "$*" | grep -o "^-.[^\ ]*n\|\-n\|^-.[^\ ]*h\|\-h\|^-.[^\ ]*i\|-i"` ]] ; then
 	if [ ! -z ${OLD_CHECKSUM} ] ; then
 		if [[ ${OLD_CHECKSUM} == ${COMPATIBILITY_CHECKSUM} ]] ; then
 			:
