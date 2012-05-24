@@ -81,22 +81,25 @@ if [ -f ${DATADIR}/version ] ; then
 	OLD_CHECKSUM="icanhazregenerationplz"
 fi
 
-if [ ! -z ${OLD_CHECKSUM} ] ; then
-	if [[ ${OLD_CHECKSUM} == ${COMPATIBILITY_CHECKSUM} ]] ; then
-		:
-	else
-		if [[ `echo "$*" | grep -o "^-.[^\ ]*c\|\-c"` ]] ; then
-			echo "Logfile generation has changed!"
-			echo "To avoid incompatibility, the log is now regenerated!"
+
+if [[ ! `echo "$*" | grep -o "^-.[^\ ]*n\|\-n\|^-.[^\ ]*h\|\-h\|^-.[^\ ]*i\|-i"` ]] ; then
+	if [ ! -z ${OLD_CHECKSUM} ] ; then
+		if [[ ${OLD_CHECKSUM} == ${COMPATIBILITY_CHECKSUM} ]] ; then
+			:
 		else
-			echo -e "${RED}Logfile generation has changed!${NC}"
-			echo -e "${RED}To avoid incompatibility, the log is now regenerated!${NC}"
+			if [[ `echo "$*" | grep -o "^-.[^\ ]*c\|\-c"` ]] ; then
+				echo "Logfile generation has changed!"
+				echo "To avoid incompatibility, the log is now regenerated!"
+			else
+				echo -e "${RED}Logfile generation has changed!${NC}"
+				echo -e "${RED}To avoid incompatibility, the log is now regenerated!${NC}"
+			fi
+			rm ${LOGNOW} ${LOG}
+			echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
 		fi
-		rm ${LOGNOW} ${LOG}
+	else
 		echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
 	fi
-else
-	echo "${COMPATIBILITY_CHECKSUM}" > ${OLD_CHECKSUM_FILE}
 fi
 
 # create empty logfile if non exists
