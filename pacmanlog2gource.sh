@@ -293,10 +293,7 @@ makelog() {
 				py*)
 					PKG=python/${PKG}.python
 					;;
-				*lxde*)
-					PKG=lxde/${PKG}.lxde
-					;;
-				lx*)
+				*lxde*|lx*)
 					PKG=lxde/${PKG}.lxde
 					;;
 				*php*)
