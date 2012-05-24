@@ -20,9 +20,19 @@
 
 #set -x
 
-# variables
 
 DATADIR=~/.pacmanlog2gource
+
+
+exit() {
+	if [ -f ${DATADIR}/lock ] ; then
+		rm ${DATADIR}/lock
+	fi
+	exit $*
+	}
+
+# variables
+
 LOGTOBEPROCESSED=${DATADIR}/pacman_purged.log
 PACMANLOG=/var/log/pacman.log
 LOGNOW=${DATADIR}/pacman_now.log
@@ -67,6 +77,16 @@ if [ ! -d "${DATADIR}" ] ; then
 		exit 1
 	fi
 fi
+
+
+if [ -f ${DATADIR}/lock ] ; then
+	echo "FATAL: log file exists."
+	echo "Please wait until current instance of pacmanlog2gource is done and re-run or"
+	echo "remove ${DATADIR}/lock manually and re-run."
+	exit 4
+fi
+
+touch ${DATADIR}/lock
 
 
 # create a checksum of the log-generating part of the script
