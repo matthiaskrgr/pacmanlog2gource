@@ -176,115 +176,144 @@ makelog() {
 			STATE=`cut -d' ' -f3 <( echo ${i} )`
 			# package name
 			PKG=`cut -d' ' -f4  <( echo ${i} )`
-			if [[ "${PKG}" == lib* ]] ; then
-				if [[ "${PKG}" == libreoffice* ]] ; then
-					if [[ "${PKG}" == *extension* ]] ; then
-						PKG=libreoffice/extension/${PKG}.libreoffice
+
+			case ${PKG} in
+				lib*)
+					if [[ "${PKG}" == libreoffice* ]] ; then
+						if [[ "${PKG}" == *extension* ]] ; then
+							PKG=libreoffice/extension/${PKG}.libreoffice
+						else
+							PKG=libreoffice/${PKG}.libreoffice
+						fi
 					else
-						PKG=libreoffice/${PKG}.libreoffice
+						if [[ "${PKG}" == *32* ]]	; then
+							PKG=lib/32/${PKG}.lib
+						else
+							PKG=lib/${PKG}.lib
+						fi
 					fi
-				else
-					if [[ "${PKG}" == *32* ]]	; then
-						PKG=lib/32/${PKG}.lib
+					;;
+				*xorg*)
+					PKG=xorg/${PKG}.xorg
+					;;
+				*ttf*)
+					PKG=ttf/${PKG}.ttf
+					;;
+				*xfce*)
+					if [[ "${PKG}" == *plugin* ]]	 ; then
+						PKG=xfce/plugins/${PKG}.xfce
 					else
-						PKG=lib/${PKG}.lib
+						PKG=xfce/${PKG}.xfce
 					fi
-				fi
-			elif [[ "${PKG}" == *xorg* ]]		 ; then
-				PKG=xorg/${PKG}.xorg
-			elif [[ "${PKG}" == *ttf* ]]		 ; then
-				PKG=ttf/${PKG}.ttf
-			elif [[ "${PKG}" == *xfce* ]]		 ; then
-				if [[ "${PKG}" == *plugin* ]]	 ; then
-					PKG=xfce/plugins/${PKG}.xfce
-				else
-					PKG=xfce/${PKG}.xfce
-				fi
-			elif [[ "${PKG}" == *sdl* ]]		 ; then
-				PKG=sdl/${PKG}.sdl
-			elif [[ "${PKG}" == *xf86* ]]		 ; then
-				PKG=xorg/xf86/${PKG}.xorg
-			elif [[ "${PKG}" == *perl* ]]		 ; then
-				PKG=perl/${PKG}.perl
-			elif [[ "${PKG}" == *gnome* ]]		 ; then
-				PKG=gnome/${PKG}.gnome
-			elif [[ "${PKG}" == *gtk* ]]		 ; then
-				PKG=gtk/${PKG}.gtk
-			elif [[ "${PKG}" == *gstreamer* ]]	 ; then
-				PKG=gstreamer/${PKG}.gstreamer
-			elif [[ "${PKG}" == *kde* ]]		 ; then
-				if [[ "${PKG}" == *kdegames* ]] ; then
-					PKG=kde/games/${PKG}.kde
-				elif [[ "${PKG}" == *kdeaccessibility* ]] ; then
-					PKG=kde/accessebility/${PKG}.kde
-				elif [[ "${PKG}" == *kdeadmin* ]] ; then
-					PKG=kde/admin/${PKG}.kde
-				elif [[ "${PKG}" == *kdeartwork* ]] ; then
-					PKG=kde/artwork/${PKG}.kde
-				elif [[ "${PKG}" == *kdebase* ]] ; then
-					PKG=kde/base/${PKG}.kde
-				elif [[ "${PKG}" == *kdeedu* ]] ; then
-					PKG=kde/edu/${PKG}.kde
-				elif [[ "${PKG}" == *kdegames* ]] ; then
-					PKG=kde/games/${PKG}.kde
-				elif [[ "${PKG}" == *kdegraphics* ]] ; then
-					PKG=kde/graphics/${PKG}.kde
-				elif [[ "${PKG}" == *kdemultimedia* ]] ; then
-					PKG=kde/multimedia/${PKG}.kde
-				elif [[ "${PKG}" == *kdenetwork* ]] ; then
-					PKG=kde/network/${PKG}.kde
-				elif [[ "${PKG}" == *kdepim* ]] ; then
-					PKG=kde/pim/${PKG}.kde
-				elif [[ "${PKG}" == *kdeplasma* ]] ; then
-					PKG=kde/plasma/${PKG}.kde
-				elif [[ "${PKG}" == *kdesdk* ]] ; then
-					PKG=kde/sdk/${PKG}.kde
-				elif [[ "${PKG}" == *kdetoys* ]] ; then
-					PKG=kde/toys/${PKG}.kde
-				elif [[ "${PKG}" == *kdeutils* ]] ; then
-					PKG=kde/utils/${PKG}.kde
-				elif [[ "${PKG}" == *kdewebdev* ]] ; then
-					PKG=kde/webdev/${PKG}.kde
-				else
-					PKG=kde/${PKG}.kde
-				fi
-			elif [[ "${PKG}" == *python* ]]		 ; then
-				PKG=python/${PKG}.python
-			elif [[ "${PKG}" == *py* ]]			 ; then
-				PKG=python/${PKG}.python
-			elif [[ "${PKG}" == *lxde* ]]		 ; then
-				PKG=lxde/${PKG}.lxde
-			elif [[ "${PKG}" == lx* ]]			 ; then
-				PKG=lxde/${PKG}.lxde
-			elif [[ "${PKG}" == *php* ]]		 ; then
-				PKG=php/${PKG}.php
-			elif [[ "${PKG}" == vim* ]]			 ; then
-				PKG=vim/${PKG}.vim
-			elif [[ "${PKG}" == *texlive* ]]	 ; then
-				PKG=texlive/${PKG}.texlive
-			elif [[ "${PKG}" == *alsa* ]]		 ; then
-				PKG=alsa/${PKG}.alsa
-			elif [[ "${PKG}" == *compiz* ]]		 ; then
-				PKG=compiz/${PKG}.compiz
-			elif [[ "${PKG}" == *dbus* ]]		 ; then
-				PKG=dbus/${PKG}.dbus
-			elif [[ "${PKG}" == gambas* ]]		 ; then
-				if 		[[ "${PKG}" == gambas2* ]] ; then
-					PKG=gambas/2/${PKG}.gambas
-				elif 	[[ "{PKG}" == gambas3* ]] ; then
-					PKG=gambas/3/${PKG}.gambas
-				else
-					PKG=gambas/${PKG}.gambas
-				fi
-			elif [[ "${PKG}" == *qt* ]]			 ; then
-				PKG=qt/${PKG}.qt
-			elif [[ "${PKG}" == *firefox* ]]	 ; then
-				PKG=mozilla/${PKG}.mozilla
-			elif [[ "${PKG}" == *thunderbird* ]] ; then
-				PKG=mozilla/${PKG}.mozilla
-			elif [[ "${PKG}" == *seamonky* ]]	 ; then
-				PKG=mozilla/${PKG}.mozilla
-			fi
+					;;
+				*sdl*)
+					PKG=sdl/${PKG}.sdl
+					;;
+				*xf86*)
+					PKG=xorg/xf86/${PKG}.xorg
+					;;
+				*perl*)
+					PKG=perl/${PKG}.perl
+					;;
+				*gnome*)
+					PKG=gnome/${PKG}.gnome
+					;;
+				*gtk*)
+					PKG=gtk/${PKG}.gtk
+					;;
+				*gstreamer*)
+					PKG=gstreamer/${gstreamer}.gstreamer
+					;;
+				*kde*)
+					if [[ "${PKG}" == *kdegames* ]] ; then
+						PKG=kde/games/${PKG}.kde
+					elif [[ "${PKG}" == *kdeaccessibility* ]] ; then
+						PKG=kde/accessebility/${PKG}.kde
+					elif [[ "${PKG}" == *kdeadmin* ]] ; then
+						PKG=kde/admin/${PKG}.kde
+					elif [[ "${PKG}" == *kdeartwork* ]] ; then
+						PKG=kde/artwork/${PKG}.kde
+					elif [[ "${PKG}" == *kdebase* ]] ; then
+						PKG=kde/base/${PKG}.kde
+					elif [[ "${PKG}" == *kdeedu* ]] ; then
+						PKG=kde/edu/${PKG}.kde
+					elif [[ "${PKG}" == *kdegames* ]] ; then
+						PKG=kde/games/${PKG}.kde
+					elif [[ "${PKG}" == *kdegraphics* ]] ; then
+						PKG=kde/graphics/${PKG}.kde
+					elif [[ "${PKG}" == *kdemultimedia* ]] ; then
+						PKG=kde/multimedia/${PKG}.kde
+					elif [[ "${PKG}" == *kdenetwork* ]] ; then
+						PKG=kde/network/${PKG}.kde
+					elif [[ "${PKG}" == *kdepim* ]] ; then
+						PKG=kde/pim/${PKG}.kde
+					elif [[ "${PKG}" == *kdeplasma* ]] ; then
+						PKG=kde/plasma/${PKG}.kde
+					elif [[ "${PKG}" == *kdesdk* ]] ; then
+						PKG=kde/sdk/${PKG}.kde
+					elif [[ "${PKG}" == *kdetoys* ]] ; then
+						PKG=kde/toys/${PKG}.kde
+					elif [[ "${PKG}" == *kdeutils* ]] ; then
+						PKG=kde/utils/${PKG}.kde
+					elif [[ "${PKG}" == *kdewebdev* ]] ; then
+						PKG=kde/webdev/${PKG}.kde
+					else
+						PKG=kde/${PKG}.kde
+					fi
+					;;
+				*python*)
+					PKG=python/${PKG}.python
+					;;
+				py*)
+					PKG=python/${PKG}.python
+					;;
+				*lxde*)
+					PKG=lxde/${PKG}.lxde
+					;;
+				lx*)
+					PKG=lxde/${PKG}.lxde
+					;;
+				*php*)
+					PKG=php/${PKG}.php
+					;;
+				vim*)
+					PKG=vim/${PKG}.vim
+					;;
+				*texlive*)
+					PKG=texlive/${PKG}.texlive
+					;;
+				*alsa*)
+					PKG=alsa/${PKG}.alsa
+					;;
+				*compiz*)
+					PKG=compiz/${PKG}.compiz
+					;;
+				*dbus*)
+					PKG=dbus/${PKG}.dbus
+					;;
+				gambas*)
+					if 		[[ "${PKG}" == gambas2* ]] ; then
+						PKG=gambas/2/${PKG}.gambas
+					elif 	[[ "{PKG}" == gambas3* ]] ; then
+						PKG=gambas/3/${PKG}.gambas
+					else
+						PKG=gambas/${PKG}.gambas
+					fi
+					;;
+				*qt*)
+					PKG=qt/${PKG}.qt
+					;;
+				*firefox*)
+					PKG=mozilla/${PKG}.mozilla
+					;;
+				*thunderbird*)
+					PKG=mozilla/${PKG}.mozilla
+					;;
+				*seamonky*)
+					PKG=mozilla/${PKG}.mozilla
+					;;
+				*)
+			esac
 
 			#    this is an awful hack to get the vars via multitasking, but it works :)
 			echo "$UNIXDATE" > /dev/null &
