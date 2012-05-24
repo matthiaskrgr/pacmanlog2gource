@@ -230,7 +230,7 @@ makelog() {
 					PKG=gtk/${PKG}.gtk
 					;;
 				*gstreamer*)
-					PKG=gstreamer/${gstreamer}.gstreamer
+					PKG=gstreamer/${PKG}.gstreamer
 					;;
 				*kde*)
 					case ${PKG} in
