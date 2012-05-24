@@ -287,10 +287,7 @@ makelog() {
 							;;
 					esac
 					;;
-				*python*)
-					PKG=python/${PKG}.python
-					;;
-				py*)
+				*python*|py*)
 					PKG=python/${PKG}.python
 					;;
 				*lxde*|lx*)
