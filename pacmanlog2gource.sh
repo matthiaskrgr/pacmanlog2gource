@@ -30,7 +30,6 @@ LOG=${DATADIR}/pacman_gource_tree.log
 
 UPDATE="true"
 COLOR="true"
-GOURCEPOST="false"
 FFMPEGPOST="false"
 GOURCEPOST="false"
 INFORMATION="false"
