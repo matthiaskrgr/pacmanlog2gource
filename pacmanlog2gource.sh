@@ -179,19 +179,24 @@ makelog() {
 
 			case ${PKG} in
 				lib*)
-					if [[ "${PKG}" == libreoffice* ]] ; then
-						if [[ "${PKG}" == *extension* ]] ; then
-							PKG=libreoffice/extension/${PKG}.libreoffice
-						else
-							PKG=libreoffice/${PKG}.libreoffice
-						fi
-					else
-						if [[ "${PKG}" == *32* ]]	; then
-							PKG=lib/32/${PKG}.lib
-						else
-							PKG=lib/${PKG}.lib
-						fi
-					fi
+					case ${PKG} in
+					libreoffice*)
+						case ${PKG} in
+							*extension*)
+								PKG=libreoffice/extension/${PKG}.libreoffice
+								;;
+							*)
+								PKG=libreoffice/${PKG}.libreoffice
+								;;
+						esac
+						;;
+					*32*)
+						PKG=lib/32/${PKG}.lib
+						;;
+					*)
+						PKG=lib/${PKG}.lib
+						;;
+					esac
 					;;
 				*xorg*)
 					PKG=xorg/${PKG}.xorg
@@ -200,11 +205,14 @@ makelog() {
 					PKG=ttf/${PKG}.ttf
 					;;
 				*xfce*)
-					if [[ "${PKG}" == *plugin* ]]	 ; then
-						PKG=xfce/plugins/${PKG}.xfce
-					else
-						PKG=xfce/${PKG}.xfce
-					fi
+					case ${PKG} in
+						*plugin*)
+							PKG=xfce/plugins/${PKG}.xfce
+							;;
+						*)
+							PKG=xfce/${PKG}.xfce
+							;;
+					esac
 					;;
 				*sdl*)
 					PKG=sdl/${PKG}.sdl
@@ -225,41 +233,59 @@ makelog() {
 					PKG=gstreamer/${gstreamer}.gstreamer
 					;;
 				*kde*)
-					if [[ "${PKG}" == *kdegames* ]] ; then
-						PKG=kde/games/${PKG}.kde
-					elif [[ "${PKG}" == *kdeaccessibility* ]] ; then
-						PKG=kde/accessebility/${PKG}.kde
-					elif [[ "${PKG}" == *kdeadmin* ]] ; then
-						PKG=kde/admin/${PKG}.kde
-					elif [[ "${PKG}" == *kdeartwork* ]] ; then
-						PKG=kde/artwork/${PKG}.kde
-					elif [[ "${PKG}" == *kdebase* ]] ; then
-						PKG=kde/base/${PKG}.kde
-					elif [[ "${PKG}" == *kdeedu* ]] ; then
-						PKG=kde/edu/${PKG}.kde
-					elif [[ "${PKG}" == *kdegames* ]] ; then
-						PKG=kde/games/${PKG}.kde
-					elif [[ "${PKG}" == *kdegraphics* ]] ; then
-						PKG=kde/graphics/${PKG}.kde
-					elif [[ "${PKG}" == *kdemultimedia* ]] ; then
-						PKG=kde/multimedia/${PKG}.kde
-					elif [[ "${PKG}" == *kdenetwork* ]] ; then
-						PKG=kde/network/${PKG}.kde
-					elif [[ "${PKG}" == *kdepim* ]] ; then
-						PKG=kde/pim/${PKG}.kde
-					elif [[ "${PKG}" == *kdeplasma* ]] ; then
-						PKG=kde/plasma/${PKG}.kde
-					elif [[ "${PKG}" == *kdesdk* ]] ; then
-						PKG=kde/sdk/${PKG}.kde
-					elif [[ "${PKG}" == *kdetoys* ]] ; then
-						PKG=kde/toys/${PKG}.kde
-					elif [[ "${PKG}" == *kdeutils* ]] ; then
-						PKG=kde/utils/${PKG}.kde
-					elif [[ "${PKG}" == *kdewebdev* ]] ; then
-						PKG=kde/webdev/${PKG}.kde
-					else
-						PKG=kde/${PKG}.kde
-					fi
+					case ${PKG} in
+						*kdegames*)
+							PKG=kde/games/${PKG}.kde
+							;;
+						*kdeaccessibility*)
+							PKG=kde/accessebility/${PKG}.kde
+							;;
+						*kdeadmin*)
+							PKG=kde/admin/${PKG}.kde
+							;;
+						*kdeartwork*)
+							PKG=kde/artwork/${PKG}.kde
+							;;
+						*kdebase*)
+							PKG=kde/base/${PKG}.kde
+							;;
+						*kdeedu*)
+							PKG=kde/edu/${PKG}.kde
+							;;
+						*kdegames*)
+							PKG=kde/games/${PKG}.kde
+							;;
+						*kdegraphics*)
+							PKG=kde/graphics/${PKG}.kde
+							;;
+						*kdemultimedia*)
+							PKG=kde/multimedia/${PKG}.kde
+							;;
+						*kdenetwork*)
+							PKG=kde/network/${PKG}.kde
+							;;
+						*kdepim*)
+							PKG=kde/pim/${PKG}.kde
+							;;
+						*kdeplasma*)
+							PKG=kde/plasma/${PKG}.kde
+							;;
+						*kdesdk*)
+							PKG=kde/sdk/${PKG}.kde
+							;;
+						*kdetoys*)
+							PKG=kde/toys/${PKG}.kde
+							;;
+						*kdeutils*)
+							PKG=kde/utils/${PKG}.kde
+							;;
+						*kdewebdev*)
+							PKG=kde/webdev/${PKG}.kde
+							;;
+						*)
+							PKG=kde/${PKG}.kde
+							;;
+					esac
 					;;
 				*python*)
 					PKG=python/${PKG}.python
@@ -292,13 +318,17 @@ makelog() {
 					PKG=dbus/${PKG}.dbus
 					;;
 				gambas*)
-					if 		[[ "${PKG}" == gambas2* ]] ; then
-						PKG=gambas/2/${PKG}.gambas
-					elif 	[[ "{PKG}" == gambas3* ]] ; then
-						PKG=gambas/3/${PKG}.gambas
-					else
-						PKG=gambas/${PKG}.gambas
-					fi
+					case ${PKG} in
+						gambas2*)
+							PKG=gambas/2/${PKG}.gambas
+							;;
+						gambas3*)
+							PKG=gambas/3/{PKG}.gambas
+							;;
+						*)
+							PKG=gambas/${PKG}.gambas
+							;;
+					esac
 					;;
 				*qt*)
 					PKG=qt/${PKG}.qt
