@@ -185,10 +185,10 @@ makelog() {
 					libreoffice*)
 						case ${PKG} in
 							*extension*)
-								PKG=libreoffice/extension/${PKG}.libreoffice
+								PKG="libreoffice/extension/${PKG}.libreoffice|18A303"
 								;;
 							*)
-								PKG=libreoffice/${PKG}.libreoffice
+								PKG="libreoffice/${PKG}.libreoffice|18A303"
 								;;
 						esac
 						;;
@@ -201,35 +201,35 @@ makelog() {
 					esac
 					;;
 				*xorg*)
-					PKG=xorg/${PKG}.xorg
+					PKG="xorg/${PKG}.xorg|ED541C"
 					;;
 				*ttf*)
-					PKG=ttf/${PKG}.ttf
+					PKG="ttf/${PKG}.ttf|000000"
 					;;
 				*xfce*)
 					case ${PKG} in
 						*plugin*)
-							PKG=xfce/plugins/${PKG}.xfce
+							PKG="xfce/plugins/${PKG}.xfce|00CED1"
 							;;
 						*)
-							PKG=xfce/${PKG}.xfce
+							PKG="xfce/${PKG}.xfce|00CED1"
 							;;
 					esac
 					;;
 				*sdl*)
-					PKG=sdl/${PKG}.sdl
+					PKG="sdl/${PKG}.sdl|E0FFFF"
 					;;
 				*xf86*)
-					PKG=xorg/xf86/${PKG}.xorg
+					PKG="xorg/xf86/${PKG}.xorg|ED541C"
 					;;
 				*perl*)
-					PKG=perl/${PKG}.perl
+					PKG="perl/${PKG}.perl|FF0000"
 					;;
 				*gnome*)
-					PKG=gnome/${PKG}.gnome
+					PKG="gnome/${PKG}.gnome|5C3317"
 					;;
 				*gtk*)
-					PKG=gtk/${PKG}.gtk
+					PKG="gtk/${PKG}.gtk|FFFF00"
 					;;
 				*gstreamer*)
 					PKG=gstreamer/${PKG}.gstreamer
@@ -237,66 +237,66 @@ makelog() {
 				*kde*)
 					case ${PKG} in
 						*kdegames*)
-							PKG=kde/games/${PKG}.kde
+							PKG="kde/games/${PKG}.kde|0000CC"
 							;;
 						*kdeaccessibility*)
-							PKG=kde/accessebility/${PKG}.kde
+							PKG="kde/accessebility/${PKG}.kde|0000CC"
 							;;
 						*kdeadmin*)
-							PKG=kde/admin/${PKG}.kde
+							PKG="kde/admin/${PKG}.kde|0000CC"
 							;;
 						*kdeartwork*)
-							PKG=kde/artwork/${PKG}.kde
+							PKG="kde/artwork/${PKG}.kde|0000CC"
 							;;
 						*kdebase*)
-							PKG=kde/base/${PKG}.kde
+							PKG="kde/base/${PKG}.kde|0000CC"
 							;;
 						*kdeedu*)
-							PKG=kde/edu/${PKG}.kde
+							PKG="kde/edu/${PKG}.kde|0000CC"
 							;;
 						*kdegames*)
-							PKG=kde/games/${PKG}.kde
+							PKG="kde/games/${PKG}.kde|0000CC"
 							;;
 						*kdegraphics*)
-							PKG=kde/graphics/${PKG}.kde
+							PKG="kde/graphics/${PKG}.kde|0000CC"
 							;;
 						*kdemultimedia*)
-							PKG=kde/multimedia/${PKG}.kde
+							PKG="kde/multimedia/${PKG}.kde|0000CC"
 							;;
 						*kdenetwork*)
-							PKG=kde/network/${PKG}.kde
+							PKG="kde/network/${PKG}.kde|0000CC"
 							;;
 						*kdepim*)
-							PKG=kde/pim/${PKG}.kde
+							PKG="kde/pim/${PKG}.kde|0000CC"
 							;;
 						*kdeplasma*)
-							PKG=kde/plasma/${PKG}.kde
+							PKG="kde/plasma/${PKG}.kde|0000CC"
 							;;
 						*kdesdk*)
-							PKG=kde/sdk/${PKG}.kde
+							PKG="kde/sdk/${PKG}.kde|0000CC"
 							;;
 						*kdetoys*)
-							PKG=kde/toys/${PKG}.kde
+							PKG="kde/toys/${PKG}.kde|0000CC"
 							;;
 						*kdeutils*)
-							PKG=kde/utils/${PKG}.kde
+							PKG="kde/utils/${PKG}.kde|0000CC"
 							;;
 						*kdewebdev*)
-							PKG=kde/webdev/${PKG}.kde
+							PKG="kde/webdev/${PKG}.kde|0000CC"
 							;;
 						*)
-							PKG=kde/${PKG}.kde
+							PKG="kde/${PKG}.kde|0000CC"
 							;;
 					esac
 					;;
 				*python*|py*)
-					PKG=python/${PKG}.python
+					PKG="python/${PKG}.python|2F4F4F"
 					;;
 				*lxde*|lx*)
-					PKG=lxde/${PKG}.lxde
+					PKG="lxde/${PKG}.lxde|E6E8FA"
 					;;
 				*php*)
-					PKG=php/${PKG}.php
+					PKG="php/${PKG}.php|6C7EB7"
 					;;
 				vim*)
 					PKG=vim/${PKG}.vim
@@ -305,7 +305,7 @@ makelog() {
 					PKG=texlive/${PKG}.texlive
 					;;
 				*alsa*)
-					PKG=alsa/${PKG}.alsa
+					PKG="alsa/${PKG}.alsa|C8DEC9"
 					;;
 				*compiz*)
 					PKG=compiz/${PKG}.compiz
@@ -327,7 +327,7 @@ makelog() {
 					esac
 					;;
 				*qt*)
-					PKG=qt/${PKG}.qt
+					PKG="qt/${PKG}.qt|91219E"
 					;;
 				*firefox*|*thunderbird*|*seamonky*)
 					PKG=mozilla/${PKG}.mozilla
