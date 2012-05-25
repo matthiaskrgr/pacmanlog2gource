@@ -20,9 +20,19 @@
 
 #set -x
 
-# variables
 
 DATADIR=~/.pacmanlog2gource
+
+
+exit_() {
+	if [ -f ${DATADIR}/lock ] ; then
+		rm ${DATADIR}/lock
+	fi
+	exit $*
+	}
+
+# variables
+
 LOGTOBEPROCESSED=${DATADIR}/pacman_purged.log
 PACMANLOG=/var/log/pacman.log
 LOGNOW=${DATADIR}/pacman_now.log
@@ -64,9 +74,19 @@ if [ ! -d "${DATADIR}" ] ; then
 		:
 	else
 		echo -e "ERROR: Unable to create ${DATADIR}" >&2
-		exit 1
+		exit_ 1
 	fi
 fi
+
+
+if [ -f ${DATADIR}/lock ] ; then
+	echo "FATAL: lockfile exists."
+	echo "Please wait until current instance of pacmanlog2gource is done and re-run or"
+	echo "remove ${DATADIR}/lock manually and re-run."
+	exit 4
+fi
+
+touch ${DATADIR}/lock
 
 
 # create a checksum of the log-generating part of the script
@@ -126,7 +146,7 @@ makelog() {
 	# check if pacman is currently in use
 	if [ -f "/var/lib/pacman/db.lck" ] ; then
 		echo "ERROR, pacman is currently in use, please wait and re-run when pacman is done." >&2
-		exit 3
+		exit_ 3
 	fi
 
 	# start the timer
@@ -451,7 +471,7 @@ while getopts "nchgfpaotimd" opt; do
 		"h")
 			UPDATE="false"
 			help
-			exit 0
+			exit_ 0
 			;;
 		"g")
 			GOURCEPOST="true"
@@ -490,11 +510,11 @@ while getopts "nchgfpaotimd" opt; do
 			UPDATE="false"
 			echo "Pacmanlog2gource: invalid option!" >&2
 			echo "Please try  pacmanlog2gource -h  for possible options." >&2
-			exit 1
+			exit_ 1
 			;;
 		*)
 			echo "Pacmanlog2gource: unknown error while processing options." >&2
-			exit 1
+			exit_ 1
 			;;
 	esac
 done
@@ -518,7 +538,7 @@ if [ ${INFORMATION} == "true" ] ; then
 	echo -e "Gource version: ${gourcename_version}"
 	echo "Feel free to comment https://bbs.archlinux.org/viewtopic.php?pid=1105145"
 	echo "or fork https://github.com/matthiaskrgr/pacmanlog2gource"
-	exit 0
+	exit_ 0
 fi
 
 if [ ${UPDATE} == "true" ] ; then
@@ -540,3 +560,4 @@ fi
 
 echo -e "For more information run ${GREEN}pacmanlog2gource -i${NC} or ${GREEN}pacmanlog2gource -h${NC}"
 echo "Thanks for using pacmanlog2gource!"
+exit_ 0
