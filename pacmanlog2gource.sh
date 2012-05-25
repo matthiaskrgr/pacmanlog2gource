@@ -18,11 +18,31 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
-#set -x
+
+# Regarding usage of the arch logo, I askde in #archlinux on irc.freeode.net on
+# Friday,  May 25th 2012 , around 12:00 CEST
+
+#11:59 < matthiaskrgr> I made a script which visualizes the pacman logfile (package updates removals etc)
+#12:00 < matthiaskrgr> looks like this http://www.youtube.com/watch?v=lCBjzC78t4o
+#[...]
+#12:00 < matthiaskrgr> and I wondered if I was allowed to display a little arch linux icon at the lower right corner
+#12:00 < allanbrokeit> I had seen that on the forums
+#[...]
+#12:00 < matthiaskrgr> or if there were any problems with it
+#12:00 < allanbrokeit> matthiaskrgr: I'd say that is fine
+#12:00 < matthiaskrgr> ok thanks :)
+#12:01 < matthiaskrgr> I'll quote you in some code comment, just in case... ;)
+#12:01 < allanbrokeit> matthiaskrgr: https://wiki.archlinux.org/index.php/DeveloperWiki:TrademarkPolicy
+#[...]
+#12:02 < allanbrokeit> I'd say this falls in the advocacy section
 
 
+
+# set -x
+
+
+# variables
 DATADIR=~/.pacmanlog2gource
-
 
 exit_() {
 
@@ -34,8 +54,6 @@ if [ ! `echo "$*" | grep -o "^-.[^\ ]*n\|\-n"` ] ; then
 fi
 	}
 
-# variables
-
 LOGTOBEPROCESSED=${DATADIR}/pacman_purged.log
 PACMANLOG=/var/log/pacman.log
 LOGNOW=${DATADIR}/pacman_now.log
@@ -46,6 +64,7 @@ COLOR="true"
 FFMPEGPOST="false"
 GOURCEPOST="false"
 INFORMATION="false"
+LOGO="false"
 
 RED='\e[1;31m'
 GREEN='\e[3;32m'
@@ -437,6 +456,8 @@ help() {
 	echo -e "-t  skip ${WHITEUL}T${NC}imestaps in title"
 	echo -e "-i  show some ${WHITEUL}I${NC}nformation regarding pacmanlog2gource"
 	echo -e "-m  skip package na${WHITEUL}M${NC}es"
+	echo -e "-l  show ${WHITEUL}icon${NC} in lower right corner"
+	echo -e "-L  show ${WHITEUL}logo${NC} in lower right corner"
 	echo -e "-d  show ${WHITEUL}D${NC}ebug information (set -x)"
 	echo -e "-h  show this ${WHITEUL}H${NC}elp"
 	# implement  -q  quiet
@@ -458,7 +479,7 @@ HOSTNAME=", hostname: `hostname`"
 ARCH=", `uname -m`"
 
 
-while getopts "nchgfpaotimd" opt; do
+while getopts "nchgfpaotimdlL" opt; do
 	case "$opt" in
 		"n")
 			echo "Log not updated." >&2
@@ -507,6 +528,39 @@ while getopts "nchgfpaotimd" opt; do
 			GOURCEPOST="true"
 			echo "Filenames will be skipped in the video." >&2
 			;;
+		"l")
+		GOURCEPOST=true
+		LOGOIMAGE="--logo ${DATADIR}/archlinux-icon-crystal-64.png"
+		if [ ! -f ${DATADIR}/archlinux-icon-crystal-64.png ] ; then
+			if [ -f /usr/share/archlinux/icons/archlinux-icon-crystal-64.svg ] ; then # if we don't have the icon locally...
+				echo -e "${RED}Icon found locally, converting...${NC}"
+				convert -background none /usr/share/archlinux/icons/archlinux-icon-crystal-64.svg ${DATADIR}/archlinux-icon-crystal-64.png
+			else # ....download it
+				echo -e "${RED}Icon not found locally, downloading icons...${NC}"
+				mkdir ${DATADIR}/tmp
+				cd ${DATADIR}/tmp
+				wget --continue "ftp://ftp.archlinux.org/other/artwork/archlinux-artwork-1.6.tar.gz" ./archlinux-artwork-1.6.tar.gz || echo -e "${RED}Could not download file, no image will be displayed.${NC}" ; LOGOIMAGE=" "
+				echo -e "${RED}Extracting archive....${NC}"
+				tar -zxvf archlinux-artwork-1.6.tar.gz
+				echo -e "${RED}Converting icon...${NC}"
+				convert -background none ./archlinux-artwork-1.6/icons/archlinux-icon-crystal-64.svg ../archlinux-icon-crystal-64.png
+				cd ../
+				echo -e "${RED}Removing unwanted files...${NC}"
+				rm -rf ./tmp
+			fi
+			echo -e "${RED}Done${NC}"
+		fi
+		;;
+		"L")
+		GOURCEPOST=true
+		LOGOIMAGE="--logo ${DATADIR}/archlogo.png"
+		if [ ! -f ${DATADIR}/archlogo.png ] ; then
+				echo -e "${RED}Logo not found locally, downloading...${NC}"
+				cd ${DATADIR}
+				wget --continue "http://www.archlinux.org/static/archnavbar/archlogo.png"  || echo -e "${RED}Could not download file, no image will be displayed.${NC}" ; LOGOIMAGE=" "
+				echo -e "${RED}Done${NC}"
+		fi
+		;;
 		"d")
 		#	DEBUG="true"
 		#	echo "Entering debug mode..." >&2
@@ -534,9 +588,9 @@ if [ ${INFORMATION} == "true" ] ; then
 	fi
 	echo -e "The command which will be run using ${GREEN}pacmanlog2gource ${ARGS}${NC}is"
 	if [ ${FFMPEGPOST} != "true" ] ; then
-		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2${NC}"
+		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} ${NC}"
 	else
-		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
+		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
 	fi
 	echo -e "Logfiles are stored in ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC} and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}."
 	echo -e "Pacmanlog2gource version: ${VERSION}"
@@ -555,11 +609,11 @@ fi
 if [ ${GOURCEPOST} == "true" ] ; then
 	if [ ${FFMPEGPOST} == "true" ] ; then
 	echo -e "<output of ${GREEN}ffmpeg${NC}>"
-		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k pacmanlog2gource_`date +%b\_%d\_%Y`.mp4
+		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k pacmanlog2gource_`date +%b\_%d\_%Y`.mp4
 	echo -e "</output of  ${GREEN}ffmpeg${NC}>"
 	else
 		echo -e "To record the video to a mp4 file using ffmpeg, run  ${GREEN}pacmanlog2gource -f${NC}  ."
-		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2
+		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE}
 	fi
 else
 	echo -e "To visualize the log, run  ${GREEN}pacmanlog2gource -g${NC}"
