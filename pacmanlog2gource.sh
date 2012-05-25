@@ -549,7 +549,9 @@ fi
 
 if [ ${GOURCEPOST} == "true" ] ; then
 	if [ ${FFMPEGPOST} == "true" ] ; then
+	echo -e "<output of ${GREEN}ffmpeg${NC}>"
 		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k pacmanlog2gource_`date +%b\_%d\_%Y`.mp4
+	echo -e "</output of  ${GREEN}ffmpeg{NC}>"
 	else
 		echo -e "To record the video to a mp4 file using ffmpeg, run  ${GREEN}pacmanlog2gource -f${NC}  ."
 		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2
