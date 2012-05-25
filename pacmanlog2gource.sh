@@ -25,10 +25,13 @@ DATADIR=~/.pacmanlog2gource
 
 
 exit_() {
+
+if [ ! `echo "$*" | grep -o "^-.[^\ ]*n\|\-n"` ] ; then
 	if [ -f ${DATADIR}/lock ] ; then
 		rm ${DATADIR}/lock
 	fi
 	exit $*
+fi
 	}
 
 # variables
@@ -85,9 +88,9 @@ if [ -f ${DATADIR}/lock ] ; then
 	echo "remove ${DATADIR}/lock manually and re-run."
 	exit 4
 fi
-
-touch ${DATADIR}/lock
-
+if [ ! `echo "$*" | grep -o "^-.[^\ ]*n\|\-n"` ] ; then
+	touch ${DATADIR}/lock
+fi
 
 # create a checksum of the log-generating part of the script
 PATHTOSCRIPT=$0
