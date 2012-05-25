@@ -213,10 +213,10 @@ makelog() {
 						esac
 						;;
 					*32*)
-						PKG=lib/32/${PKG}.lib
+						PKG="lib/32/${PKG}.lib|585858"
 						;;
 					*)
-						PKG=lib/${PKG}.lib
+						PKG="lib/${PKG}.lib|585858"
 						;;
 					esac
 					;;
