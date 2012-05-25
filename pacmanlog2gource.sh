@@ -252,7 +252,7 @@ makelog() {
 					PKG="gtk/${PKG}.gtk|FFFF00"
 					;;
 				*gstreamer*)
-					PKG=gstreamer/${PKG}.gstreamer
+					PKG="gstreamer/${PKG}.gstreamer|FFFF66"
 					;;
 				*kde*)
 					case ${PKG} in
@@ -319,30 +319,30 @@ makelog() {
 					PKG="php/${PKG}.php|6C7EB7"
 					;;
 				vim*)
-					PKG=vim/${PKG}.vim
+					PKG="vim/${PKG}.vim|00FF66"
 					;;
 				*texlive*)
-					PKG=texlive/${PKG}.texlive
+					PKG="texlive/${PKG}.texlive|660066"
 					;;
 				*alsa*)
 					PKG="alsa/${PKG}.alsa|C8DEC9"
 					;;
 				*compiz*)
-					PKG=compiz/${PKG}.compiz
+					PKG="compiz/${PKG}.compiz|FF0066"
 					;;
 				*dbus*)
-					PKG=dbus/${PKG}.dbus
+					PKG="dbus/${PKG}.dbus|99FFFF"
 					;;
 				gambas*)
 					case ${PKG} in
 						gambas2*)
-							PKG=gambas/2/${PKG}.gambas
+							PKG="gambas/2/${PKG}.gambas|996633"
 							;;
 						gambas3*)
-							PKG=gambas/3/{PKG}.gambas
+							PKG="gambas/3/{PKG}.gambas|996633"
 							;;
 						*)
-							PKG=gambas/${PKG}.gambas
+							PKG="gambas/${PKG}.gambas|996633"
 							;;
 					esac
 					;;
@@ -350,7 +350,7 @@ makelog() {
 					PKG="qt/${PKG}.qt|91219E"
 					;;
 				*firefox*|*thunderbird*|*seamonky*)
-					PKG=mozilla/${PKG}.mozilla
+					PKG="mozilla/${PKG}.mozilla|996633"
 					;;
 				*)
 			esac
