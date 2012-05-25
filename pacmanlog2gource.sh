@@ -422,6 +422,8 @@ makelog() {
 
 	echo -e "100 % done after ${RED}${TIMEFINAL}${NC}s."
 	echo -e "${RED}${LINESPERSEC:0:6}${NC} lines per second.\n"
+
+	rm ${DATADIR}/lock # remove lockfile
 } # makelog
 
 help() {
