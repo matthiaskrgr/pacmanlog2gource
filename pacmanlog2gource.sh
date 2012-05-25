@@ -588,9 +588,9 @@ if [ ${INFORMATION} == "true" ] ; then
 	fi
 	echo -e "The command which will be run using ${GREEN}pacmanlog2gource ${ARGS}${NC}is"
 	if [ ${FFMPEGPOST} != "true" ] ; then
-		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} ${NC}"
+		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --bloom-multiplier 1.3 ${NC}"
 	else
-		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
+		echo -e "${GREEN}gource ${GREENUL}${DATADIR}/pacman_gource_tree.log${NC}${GREEN} -1200x720 -c 1.1 --title \"${TITLE}\" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --bloom-multiplier 1.3 --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k ${GREENUL}pacmanlog2gource_`date +%b\_%d\_%Y`.mp4${NC}"
 	fi
 	echo -e "Logfiles are stored in ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC} and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}."
 	echo -e "Pacmanlog2gource version: ${VERSION}"
@@ -609,11 +609,11 @@ fi
 if [ ${GOURCEPOST} == "true" ] ; then
 	if [ ${FFMPEGPOST} == "true" ] ; then
 	echo -e "<output of ${GREEN}ffmpeg${NC}>"
-		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k pacmanlog2gource_`date +%b\_%d\_%Y`.mp4
+		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --bloom-multiplier 1.3 --output-ppm-stream - | ffmpeg -f image2pipe -vcodec ppm -i - -y -vcodec libx264 -preset medium -crf 22 -pix_fmt yuv420p -threads ${cpucores} -b:v 3000k -maxrate 8000k -bufsize 10000k pacmanlog2gource_`date +%b\_%d\_%Y`.mp4
 	echo -e "</output of  ${GREEN}ffmpeg${NC}>"
 	else
 		echo -e "To record the video to a mp4 file using ffmpeg, run  ${GREEN}pacmanlog2gource -f${NC}  ."
-		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE}
+		gource ${LOG} -1200x720  -c 1.1 --title "${TITLE}" --key --camera-mode overview --highlight-all-users --file-idle-time 0 -auto-skip-seconds 0.001 --seconds-per-day 0.3 --hide progress,mouse${FILENAMES} --stop-at-end --max-files 99999999999 --max-file-lag 0.00001  --max-user-speed 300 --user-friction 2 ${LOGOIMAGE} --bloom-multiplier 1.3
 	fi
 else
 	echo -e "To visualize the log, run  ${GREEN}pacmanlog2gource -g${NC}"
