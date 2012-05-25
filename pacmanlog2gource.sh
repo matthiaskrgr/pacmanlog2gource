@@ -293,7 +293,7 @@ makelog() {
 					PKG="python/${PKG}.python|2F4F4F"
 					;;
 				*lxde*|lx*)
-					PKG="lxde/${PKG}.lxde|E6E8FA"
+					PKG="lxde/${PKG}.lxde|8C8C8C"
 					;;
 				*php*)
 					PKG="php/${PKG}.php|6C7EB7"
