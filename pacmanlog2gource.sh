@@ -19,7 +19,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 
-# Regarding usage of the arch logo, I askde in #archlinux on irc.freeode.net on
+# Regarding usage of the arch logo, I asked in #archlinux on irc.freeode.net on
 # Friday,  May 25th 2012 , around 12:00 CEST
 
 #11:59 < matthiaskrgr> I made a script which visualizes the pacman logfile (package updates removals etc)
