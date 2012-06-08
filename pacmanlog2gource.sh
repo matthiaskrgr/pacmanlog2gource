@@ -205,8 +205,14 @@ makelog() {
 	LINE=1
 	LINEPRCOUT=1
 	MAXLINES=`wc -l ${LOGTOBEPROCESSED} | cut -d' ' -f1`
+	PURGELINEPERC=`calc -p "${MAXLINES}/${ORIGLINES}*100-100"`
+	echo -e "Processing ${MAXLINES} lines of purged log (${PURGEDONESIZE}kB)..."
 
-	echo -e "Processing ${MAXLINES} lines of purged log (${PURGEDONESIZE}kB)...\n"
+	if [ ! ${MAXLINES} == "0" ] ; then
+		echo -e "Purging efficiency: ${PURGELINEPERC:1:5}% \n"  | sed s/\ -/\ /
+	else
+		echo ""
+	fi
 
 	cp ${LOGTOBEPROCESSED} ${DATADIR}/tmp
 
