@@ -404,8 +404,8 @@ makelog() {
 				LINEPERCOUT=0
 			fi
 			#     switch to next line and re-start the loop
-			LINE=`expr ${LINE} + 1`
-			LINEPERCOUT=`expr ${LINEPERCOUT} + 1`
+			let LINE=${LINE}+1
+			let LINEPERCOUT=${LINEPERCOUT}+1
 		done
 		# file loop stuff..
 		set +f
