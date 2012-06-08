@@ -171,6 +171,12 @@ makelog() {
 		exit_ 3
 	fi
 
+	# check if we have a pacman logfile
+	if [ ! -f "${PACMANLOG}" ] ; then
+		echo "ERROR, could not find ${PACMANLOG}, exiting..."
+		exit_ 4
+	fi
+
 	# start the timer
 	timestart
 
