@@ -807,7 +807,8 @@ while getopts "nchgfpaotimdlLq" opt; do
 			;;
 		"q")
 			QUIET="true"
-			echo "Entering quiet mode, this should be faster than default mode but doesn't estimate when log genration will be finished"
+			echo "Entering quiet mode, this should be faster than default mode"
+			echo "but doesn't estimate when log genration will be finished."
 			;;
 		"?")
 			UPDATE="false"
