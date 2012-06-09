@@ -45,14 +45,39 @@
 DATADIR=~/.pacmanlog2gource
 
 exit_() {
-
-if [ ! `echo "$*" | grep -o "^-.[^\ ]*n\|\-n"` ] ; then
-	if [ -f ${DATADIR}/lock ] ; then
-		rm ${DATADIR}/lock
+	if [ ! `echo "$*" | grep -o "^-.[^\ ]*n\|\-n"` ] ; then
+		if [ -f ${DATADIR}/lock ] ; then
+			rm ${DATADIR}/lock
+		fi
+		exit $*
 	fi
-	exit $*
-fi
-	}
+}
+
+sizecalc() {
+	outputunit=b
+	input=$1
+	if [ ${input} == 0 ] ; then
+		echo -n "0 b"
+	else
+		outputval=${input}
+		((outputkilo=${outputval}/1024))
+		if [ ! "${outputkilo}" == 0 ] ; then
+			outputunit=kb
+			outputval=${outputkilo}
+			((outputmega=${outputkilo}/1024))
+			if [ ! "${outputmega}" == 0 ] ; then
+				outputunit=Mb
+				outputval=${outputmega}
+				((outputgiga=${outputmega}/1024))
+				if [ ! "${outputgiga}" == 0 ] ; then
+					outputunit=Gb
+					outputval=${outputgiga}
+				fi
+			fi
+		fi
+		echo "${outputval} ${outputunit}"
+	fi
+}
 
 LOGTOBEPROCESSED=${DATADIR}/pacman_purged.log
 PACMANLOG=/var/log/pacman.log
@@ -196,19 +221,23 @@ makelog_pre() {
 
 
 	# get lines and size of the pacman log
-	ORIGSIZE=`du ${DATADIR}/process.log | cut  -f1`
+	ORIGSIZE=`du -b ${DATADIR}/process.log | cut  -f1`
 	ORIGLINES=`wc ${DATADIR}/process.log -l | cut -d' ' -f1`
 
-	echo -e "Purging the diff (${ORIGLINES} lines, ${ORIGSIZE}kB) and saving the result to ${WHITEUL}${DATADIR}${NC}."
+	ORIGSIZE_OUT=`sizecalc ${ORIGSIZE}`
+
+	echo -e "Purging the diff (${ORIGLINES} lines, ${ORIGSIZE_OUT}) and saving the result to ${WHITEUL}${DATADIR}${NC}."
 	sed -e 's/\[/\n[/g' -e '/^$/d' ${DATADIR}/process.log | awk '/] installed|] upgraded|] removed/' > ${LOGTOBEPROCESSED}
 
-	PURGEDONESIZE=`du ${LOGTOBEPROCESSED} | cut -f1`
+	PURGEDONESIZE=`du -b ${LOGTOBEPROCESSED} | cut -f1`
+
+	PURGEDONESIZE_OUT=`sizecalc ${PURGEDONESIZE}`
 
 	CURLINE=1
 	LINEPRCOUT=1
 	MAXLINES=`wc -l ${LOGTOBEPROCESSED} | cut -d' ' -f1`
 	PURGELINEPERC=`calc -p "${MAXLINES}/${ORIGLINES}*100-100"`
-	echo -e "Processing ${MAXLINES} lines of purged log (${PURGEDONESIZE}kB)..."
+	echo -e "Processing ${MAXLINES} lines of purged log (${PURGEDONESIZE_OUT})..."
 
 	if [ ! ${MAXLINES} == "0" ] ; then
 		echo -e "Purging efficiency: ${PURGELINEPERC:1:5}% \n"  | sed s/\ -/\ /
