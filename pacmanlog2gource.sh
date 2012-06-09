@@ -65,6 +65,7 @@ FFMPEGPOST="false"
 GOURCEPOST="false"
 INFORMATION="false"
 LOGO="false"
+QUIET="false"
 
 RED='\e[1;31m'
 GREEN='\e[3;32m'
@@ -163,9 +164,10 @@ timeend()
 	TDG=`calc -p $TEG - $TSG`
 }
 
-makelog() {
 
-	# check if pacman is currently in use
+makelog_pre() {
+
+		# check if pacman is currently in use
 	if [ -f "/var/lib/pacman/db.lck" ] ; then
 		echo "ERROR, pacman is currently in use, please wait and re-run when pacman is done." >&2
 		exit_ 3
@@ -202,7 +204,7 @@ makelog() {
 
 	PURGEDONESIZE=`du ${LOGTOBEPROCESSED} | cut -f1`
 
-	LINE=1
+	CURLINE=1
 	LINEPRCOUT=1
 	MAXLINES=`wc -l ${LOGTOBEPROCESSED} | cut -d' ' -f1`
 	PURGELINEPERC=`calc -p "${MAXLINES}/${ORIGLINES}*100-100"`
@@ -215,8 +217,199 @@ makelog() {
 	fi
 
 	cp ${LOGTOBEPROCESSED} ${DATADIR}/tmp
+	} # makelog_pre
 
-	while [ "$LINE" -le "$MAXLINES" ]; do
+makelog_quiet() {
+
+		########################
+		## processing the log ##
+		########################
+
+
+		while read line ; do
+#checksumstart
+			# the unix time string
+			linearray=(${line})
+
+			#UNIXDATE="${line2[1]:1:16}"
+			UNIXDATE=`date +"%s" -d "${line:1:16}"`
+			# put  installed/removed/upgraded information in there again, we translated these later with sed in one rush
+			STATE="${linearray[2]}"
+			# package name
+			PKG="${linearray[3]}"
+
+			case ${PKG} in
+				lib*)
+					case ${PKG} in
+					libreoffice*)
+						case ${PKG} in
+							*extension*)
+								PKG="libreoffice/extension/${PKG}.libreoffice|18A303"
+								;;
+							*)
+								PKG="libreoffice/${PKG}.libreoffice|18A303"
+								;;
+						esac
+						;;
+					*32*)
+						PKG="lib/32/${PKG}.lib|585858"
+						;;
+					*)
+						PKG="lib/${PKG}.lib|585858"
+						;;
+					esac
+					;;
+				*xorg*)
+					PKG="xorg/${PKG}.xorg|ED541C"
+					;;
+				*ttf*)
+					PKG="ttf/${PKG}.ttf|000000"
+					;;
+				*xfce*)
+					case ${PKG} in
+						*plugin*)
+							PKG="xfce/plugins/${PKG}.xfce|00CED1"
+							;;
+						*)
+							PKG="xfce/${PKG}.xfce|00CED1"
+							;;
+					esac
+					;;
+				*sdl*)
+					PKG="sdl/${PKG}.sdl|E0FFFF"
+					;;
+				*xf86*)
+					PKG="xorg/xf86/${PKG}.xorg|ED541C"
+					;;
+				*perl*)
+					PKG="perl/${PKG}.perl|FF0000"
+					;;
+				*gnome*)
+					PKG="gnome/${PKG}.gnome|5C3317"
+					;;
+				*gtk*)
+					PKG="gtk/${PKG}.gtk|FFFF00"
+					;;
+				*gstreamer*)
+					PKG="gstreamer/${PKG}.gstreamer|FFFF66"
+					;;
+				*kde*)
+					case ${PKG} in
+						*kdegames*)
+							PKG="kde/games/${PKG}.kde|0000CC"
+							;;
+						*kdeaccessibility*)
+							PKG="kde/accessebility/${PKG}.kde|0000CC"
+							;;
+						*kdeadmin*)
+							PKG="kde/admin/${PKG}.kde|0000CC"
+							;;
+						*kdeartwork*)
+							PKG="kde/artwork/${PKG}.kde|0000CC"
+							;;
+						*kdebase*)
+							PKG="kde/base/${PKG}.kde|0000CC"
+							;;
+						*kdeedu*)
+							PKG="kde/edu/${PKG}.kde|0000CC"
+							;;
+						*kdegames*)
+							PKG="kde/games/${PKG}.kde|0000CC"
+							;;
+						*kdegraphics*)
+							PKG="kde/graphics/${PKG}.kde|0000CC"
+							;;
+						*kdemultimedia*)
+							PKG="kde/multimedia/${PKG}.kde|0000CC"
+							;;
+						*kdenetwork*)
+							PKG="kde/network/${PKG}.kde|0000CC"
+							;;
+						*kdepim*)
+							PKG="kde/pim/${PKG}.kde|0000CC"
+							;;
+						*kdeplasma*)
+							PKG="kde/plasma/${PKG}.kde|0000CC"
+							;;
+						*kdesdk*)
+							PKG="kde/sdk/${PKG}.kde|0000CC"
+							;;
+						*kdetoys*)
+							PKG="kde/toys/${PKG}.kde|0000CC"
+							;;
+						*kdeutils*)
+							PKG="kde/utils/${PKG}.kde|0000CC"
+							;;
+						*kdewebdev*)
+							PKG="kde/webdev/${PKG}.kde|0000CC"
+							;;
+						*)
+							PKG="kde/${PKG}.kde|0000CC"
+							;;
+					esac
+					;;
+				*python*|py*)
+					PKG="python/${PKG}.python|2F4F4F"
+					;;
+				*lxde*|lx*)
+					PKG="lxde/${PKG}.lxde|8C8C8C"
+					;;
+				*php*)
+					PKG="php/${PKG}.php|6C7EB7"
+					;;
+				vim*)
+					PKG="vim/${PKG}.vim|00FF66"
+					;;
+				*texlive*)
+					PKG="texlive/${PKG}.texlive|660066"
+					;;
+				*alsa*)
+					PKG="alsa/${PKG}.alsa|C8DEC9"
+					;;
+				*compiz*)
+					PKG="compiz/${PKG}.compiz|FF0066"
+					;;
+				*dbus*)
+					PKG="dbus/${PKG}.dbus|99FFFF"
+					;;
+				gambas*)
+					case ${PKG} in
+						gambas2*)
+							PKG="gambas/2/${PKG}.gambas|996633"
+							;;
+						gambas3*)
+							PKG="gambas/3/{PKG}.gambas|996633"
+							;;
+						*)
+							PKG="gambas/${PKG}.gambas|996633"
+							;;
+					esac
+					;;
+				*qt*)
+					PKG="qt/${PKG}.qt|91219E"
+					;;
+				*firefox*|*thunderbird*|*seamonky*)
+					PKG="mozilla/${PKG}.mozilla|996633"
+					;;
+				*)
+			esac
+
+			#    this is an awful hack to get the vars via multitasking, but it works :)
+			echo "$UNIXDATE" > /dev/null &
+			echo "$STATE" > /dev/null &
+			echo "$PKG" > /dev/null &
+			wait
+
+
+			#    write the important stuff into our logfile
+			echo "${UNIXDATE}|root|${STATE}|${PKG}" >> ${DATADIR}/pacman_gource_tree.log
+		done < ${DATADIR}/tmp
+} # makelog_quiet
+
+
+makelog() {
+
+	while [ "$CURLINE" -le "$MAXLINES" ]; do
 		########################
 		## processing the log ##
 		########################
@@ -225,7 +418,6 @@ makelog() {
 		IFS=$'\n'
 		set -f
 		for i in $(<${DATADIR}/tmp); do
-#checksumstart
 			# the unix time string
 			UNIXDATE=`date +"%s" -d "${i:1:16}"`
 			# put  installed/removed/upgraded information in there again, we translated these later with sed in one rush
@@ -405,7 +597,7 @@ makelog() {
 			if [ "${LINEPERCOUT}" == "1000" ] ; then
 				LINECOUNTCOOKIE=1
 				#    can we use  expr  here, or something more simple?
-				LINEPERC=`calc -p "${LINE} / ${MAXLINES} *100" | sed -e 's/\~//'`
+				LINEPERC=`calc -p "${CURLINE} / ${MAXLINES} *100" | sed -e 's/\~//'`
 				timeend
 				#    same as echo ${TDG} | grep -o "[0-9]*\.\?[0-9]\?[0-9]" # | head -n1
 				TGDOUT=`awk 'match($0,/[0-9]*.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}' <( echo "${TDG}")`
@@ -416,13 +608,19 @@ makelog() {
 				LINEPERCOUT=0
 			fi
 			#     switch to next line and re-start the loop
-			let LINE=${LINE}+1
+			let CURLINE=${CURLINE}+1
 			let LINEPERCOUT=${LINEPERCOUT}+1
 		done
 		# file loop stuff..
 		set +f
 		unset IFS
 	done
+
+} # makelog
+
+
+makelog_post() {
+
 	# was the package installed/removed/upgraded?  here we actually translate this important information
 	sed -e 's/|installed|/|A|/' -e 's/|upgraded|/|M|/' -e 's/|removed|/|D|/' ${DATADIR}/pacman_gource_tree.log > ${DATADIR}/tmp2.log
 	mv ${DATADIR}/tmp2.log ${DATADIR}/pacman_gource_tree.log &
@@ -455,7 +653,8 @@ makelog() {
 	echo -e "${RED}${LINESPERSEC:0:6}${NC} lines per second.\n"
 
 	rm ${DATADIR}/lock # remove lockfile
-} # makelog
+} # makelog_post
+
 
 help() {
 	echo -e "-n  do${WHITEUL}N${NC}'t update the log"
@@ -470,9 +669,9 @@ help() {
 	echo -e "-m  skip package na${WHITEUL}M${NC}es"
 	echo -e "-l  show ${WHITEUL}icon${NC} in lower right corner"
 	echo -e "-L  show ${WHITEUL}logo${NC} in lower right corner"
+	echo -e "-q  don't estimate when log conversion is finished, and be faster"
 	echo -e "-d  show ${WHITEUL}D${NC}ebug information (set -x)"
 	echo -e "-h  show this ${WHITEUL}H${NC}elp"
-	# implement  -q  quiet
 }
 
 logbeginningdate=`head -n1 ${LOGNOW} |  cut -d' ' -f1 | sed  -e 's/\[//'`
@@ -491,7 +690,7 @@ HOSTNAME=", hostname: `hostname`"
 ARCH=", `uname -m`"
 
 
-while getopts "nchgfpaotimdlL" opt; do
+while getopts "nchgfpaotimdlLq" opt; do
 	case "$opt" in
 		"n")
 			echo "Log not updated." >&2
@@ -577,6 +776,10 @@ while getopts "nchgfpaotimdlL" opt; do
 		#	DEBUG="true"
 		#	echo "Entering debug mode..." >&2
 			;;
+		"q")
+			QUIET="true"
+			echo "Entering quiet mode, this should be faster than default mode but doesn't estimate when log genration will be finished"
+			;;
 		"?")
 			UPDATE="false"
 			echo "Pacmanlog2gource: invalid option!" >&2
@@ -613,7 +816,14 @@ if [ ${INFORMATION} == "true" ] ; then
 fi
 
 if [ ${UPDATE} == "true" ] ; then
-	makelog
+	makelog_pre
+	if [ ${QUIET} == "true" ] ; then
+		makelog_quiet
+	else
+		makelog
+	fi
+	makelog_post
+
 	echo -e "Output files are ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC}"
 	echo -e "\t and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}.\n\n"
 fi
