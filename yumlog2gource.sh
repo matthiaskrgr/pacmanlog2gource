@@ -635,10 +635,9 @@ makelog() {
 				#    can we use  expr  here, or something more simple?
 				LINEPERC=`calc -p "${CURLINE} / ${MAXLINES} *100" | sed -e 's/\~//'`
 				timeend
-				#    same as echo ${TDG} | grep -o "[0-9]*\.\?[0-9]\?[0-9]" # | head -n1
-				TGDOUT=`awk 'match($0,/[0-9]*.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}' <( echo "${TDG}")`
+				TGDOUT=`grep -o "[0-9]*\.\?[0-9]\?[0-9]" <( echo "${TDG}") | head -n1`
 				TIMEDONEONE=`calc -p "100 / ${LINEPERC:0:4} *${TDG}" | sed 's/\~//'`
-				TIMEDONEFINAL=`calc -p "${TIMEDONEONE} - ${TDG}" | sed 's/\~//' | awk 'match($0,/[0-9]*.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}'`
+				TIMEDONEFINAL=`calc -p "${TIMEDONEONE} - ${TDG}" | sed 's/\~//' | grep -o "[0-9]*.?[0-9]?[0-9]" | head -n1`
 				echo "Already ${LINEPERC:0:4}% done after ${TGDOUT}s."
 				echo -e "Done in approximately ${TIMEDONEFINAL}s.\n"
 				LINEPERCOUT=0
@@ -679,9 +678,9 @@ makelog_post() {
 	timeend
 
 	if [[ ${LINECOUNTCOOKIE} == "1" ]] ; then
-		TIMEFINAL=`awk 'match($0,/[0-9]*\.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}' <( echo "${TDG}" )`
+		TIMEFINAL=`grep -o "[0-9]*\.\?[0-9]\?[0-9]" <( echo "${TDG}" ) | head -n1`
 	else
-		TIMEFINAL=`awk 'match($0,/[0-9]*.[0-9]{5}/) {print substr($0,RSTART,RLENGTH)}' <( echo "${TDG}" )`
+		TIMEFINAL=`grep -o "[0-9]*.[0-9]\{5\}" <( echo "${TDG}" ) | tail -n1`
 	fi
 
 	if [[ ${MAXLINES} == "0" ]] ; then
