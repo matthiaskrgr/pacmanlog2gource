@@ -457,9 +457,9 @@ makelog() {
 			# the unix time string
 			UNIXDATE=`date +"%s" -d "${i:0:16}"`
 			# put  installed/removed/upgraded information in there again, we translated these later with sed in one rush
-			STATE=`cut -d' ' -f4 <( echo ${i} )`
+			STATE=`echo $i |cut -d' ' -f4`
 			# package name
-			PKG=`cut -d' ' -f5  <( echo ${i} )`
+			PKG=`echo ${i} | cut -d' ' -f5`
 			PKG=`echo ${PKG} | grep -o "^[a-Z,0-9,-,\.]*"`
 
 			case ${PKG} in
@@ -636,7 +636,7 @@ makelog() {
 				LINEPERC=`calc -p "${CURLINE} / ${MAXLINES} *100" | sed -e 's/\~//'`
 				timeend
 				#    same as echo ${TDG} | grep -o "[0-9]*\.\?[0-9]\?[0-9]" # | head -n1
-				TGDOUT=`awk 'match($0,/[0-9]*.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}' <( echo "${TDG}")`
+				TGDOUT=`echo ${TDG} | awk 'match($0,/[0-9]*.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}'`
 				TIMEDONEONE=`calc -p "100 / ${LINEPERC:0:4} *${TDG}" | sed 's/\~//'`
 				TIMEDONEFINAL=`calc -p "${TIMEDONEONE} - ${TDG}" | sed 's/\~//' | awk 'match($0,/[0-9]*.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}'`
 				echo "Already ${LINEPERC:0:4}% done after ${TGDOUT}s."
@@ -679,9 +679,9 @@ makelog_post() {
 	timeend
 
 	if [[ ${LINECOUNTCOOKIE} == "1" ]] ; then
-		TIMEFINAL=`awk 'match($0,/[0-9]*\.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}' <( echo "${TDG}" )`
+		TIMEFINAL=`echo "${TDG}" | awk 'match($0,/[0-9]*\.?[0-9]?[0-9]/) {print substr($0,RSTART,RLENGTH)}'`
 	else
-		TIMEFINAL=`awk 'match($0,/[0-9]*.[0-9]{5}/) {print substr($0,RSTART,RLENGTH)}' <( echo "${TDG}" )`
+		TIMEFINAL=`echo "${TDG}" | awk 'match($0,/[0-9]*.[0-9]{5}/) {print substr($0,RSTART,RLENGTH)}'`
 	fi
 
 	if [[ ${MAXLINES} == "0" ]] ; then
