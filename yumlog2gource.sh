@@ -79,10 +79,10 @@ sizecalc() {
 	fi
 }
 
-LOGTOBEPROCESSED=${DATADIR}/pacman_purged.log
-PACMANLOG=/var/log/pacman.log
-LOGNOW=${DATADIR}/pacman_now.log
-LOG=${DATADIR}/pacman_gource_tree.log
+YUMLOG=/var/log/yum.log
+LOGTOBEPROCESSED=${DATADIR}/yum_purged.log
+LOGNOW=${DATADIR}/yum_now.log
+LOG=${DATADIR}/yum_gource_tree.log
 
 UPDATE="true"
 COLOR="true"
@@ -192,27 +192,27 @@ timeend()
 
 makelog_pre() {
 
-		# check if pacman is currently in use
-	if [ -f "/var/lib/pacman/db.lck" ] ; then
-		echo "ERROR, pacman is currently in use, please wait and re-run when pacman is done." >&2
+		# check if yum is currently in use
+	if [ -f "/var/run/yum.pid" ] ; then
+		echo "ERROR, yum is currently in use, please wait and re-run when yum is done." >&2
 		exit_ 3
 	fi
 
-	# check if we have a pacman logfile
-	if [ ! -f "${PACMANLOG}" ] ; then
-		echo "ERROR, could not find ${PACMANLOG}, exiting..."
+	# check if we have a yum logfile
+	if [ ! -f "${YUMLOG}" ] ; then
+		echo "ERROR, could not find ${YUMLOG}, exiting..."
 		exit_ 4
 	fi
 
 	# start the timer
 	timestart
 
-	# copy the pacman log as pacman_tmp.log to our datadir
-	cp ${PACMANLOG} ${DATADIR}/pacman_tmp.log
+	# copy the yum log as yum_tmp.log to our datadir
+	cp ${YUMLOG} ${DATADIR}/yum_tmp.log
 
-	echo -e "Getting diff between ${WHITEUL}${PACMANLOG}${NC} and an older local copy."
+	echo -e "Getting diff between ${WHITEUL}${YUMLOG}${NC} and an older local copy."
 	# we only want to proceed new entries, old ones are already included in the log
-	diff -u ${LOGNOW} ${PACMANLOG} | awk /'^+'/ | sed -e 's/^+//' > ${DATADIR}/process.log
+	diff -u ${LOGNOW} ${YUMLOG} | awk /'^+'/ | sed -e 's/^+//' > ${DATADIR}/process.log
 
 
 	######################
@@ -227,7 +227,7 @@ makelog_pre() {
 	ORIGSIZE_OUT=`sizecalc ${ORIGSIZE}`
 
 	echo -e "Purging the diff (${ORIGLINES} lines, ${ORIGSIZE_OUT}) and saving the result to ${WHITEUL}${DATADIR}${NC}."
-	sed -e 's/\[/\n[/g' -e '/^$/d' ${DATADIR}/process.log | awk '/] installed|] upgraded|] removed/' > ${LOGTOBEPROCESSED}
+	sed -e 's/\[/\n[/g' -e '/^$/d' ${DATADIR}/process.log | awk '/ Installed| Updated| Erased/' > ${LOGTOBEPROCESSED}
 
 	PURGEDONESIZE=`du -b ${LOGTOBEPROCESSED} | cut -f1`
 
@@ -248,6 +248,8 @@ makelog_pre() {
 	cp ${LOGTOBEPROCESSED} ${DATADIR}/tmp
 	} # makelog_pre
 
+
+
 makelog_quiet() {
 
 		########################
@@ -259,13 +261,13 @@ makelog_quiet() {
 #checksumstart
 			# the unix time string
 			linearray=(${line})
-
 			#UNIXDATE="${line2[1]:1:16}"
-			UNIXDATE=`date +"%s" -d "${line:1:16}"`
+			UNIXDATE=`date +"%s" -d "${line:0:15}"`
 			# put  installed/removed/upgraded information in there again, we translated these later with sed in one rush
-			STATE="${linearray[2]}"
+			STATE="${linearray[3]}"
 			# package name
-			PKG="${linearray[3]}"
+			PKG="${linearray[4]}"
+			PKG=`echo ${PKG} | grep -o "^[a-Z,0-9,-,\.]*"`
 
 			case ${PKG} in
 				lib*)
@@ -431,9 +433,12 @@ makelog_quiet() {
 
 
 			#    write the important stuff into our logfile
-			echo "${UNIXDATE}|root|${STATE}|${PKG}" >> ${DATADIR}/pacman_gource_tree.log
+			echo "${UNIXDATE}|root|${STATE}|${PKG}" >> ${LOG}
 		done < ${DATADIR}/tmp
 } # makelog_quiet
+
+
+
 
 
 makelog() {
@@ -447,12 +452,15 @@ makelog() {
 		IFS=$'\n'
 		set -f
 		for i in $(<${DATADIR}/tmp); do
+
+
 			# the unix time string
-			UNIXDATE=`date +"%s" -d "${i:1:16}"`
+			UNIXDATE=`date +"%s" -d "${i:0:16}"`
 			# put  installed/removed/upgraded information in there again, we translated these later with sed in one rush
-			STATE=`cut -d' ' -f3 <( echo ${i} )`
+			STATE=`cut -d' ' -f4 <( echo ${i} )`
 			# package name
-			PKG=`cut -d' ' -f4  <( echo ${i} )`
+			PKG=`cut -d' ' -f5  <( echo ${i} )`
+			PKG=`echo ${PKG} | grep -o "^[a-Z,0-9,-,\.]*"`
 
 			case ${PKG} in
 				lib*)
@@ -618,8 +626,7 @@ makelog() {
 
 
 			#    write the important stuff into our logfile
-			echo "${UNIXDATE}|root|${STATE}|${PKG}" >> ${DATADIR}/pacman_gource_tree.log
-#checksumstop
+			echo "${UNIXDATE}|root|${STATE}|${PKG}" >> ${DATADIR}/yum_gource_tree.log
 			#    here we print how log the script already took to run and try to estimate how log it will run until everything is done
 			#    but we only update this every 1000 lines to avoid unnecessary stdout spamming
 			#    this will mostly be printed when initially obtaining the log
@@ -648,19 +655,24 @@ makelog() {
 } # makelog
 
 
-makelog_post() {
 
+
+
+
+
+
+makelog_post() {
 	# was the package installed/removed/upgraded?  here we actually translate this important information
-	sed -e 's/|installed|/|A|/' -e 's/|upgraded|/|M|/' -e 's/|removed|/|D|/' ${DATADIR}/pacman_gource_tree.log > ${DATADIR}/tmp2.log
-	mv ${DATADIR}/tmp2.log ${DATADIR}/pacman_gource_tree.log &
-	mv ${DATADIR}/pacman_tmp.log ${LOGNOW} &
-	rm ${DATADIR}/pacman_purged.log ${DATADIR}/process.log ${DATADIR}/tmp &
+	sed -e 's/|Installed:|/|A|/' -e 's/|Updated:|/|M|/' -e 's/|Erased:|/|D|/' ${LOG} > ${DATADIR}/tmp2.log
+	mv ${DATADIR}/tmp2.log ${DATADIR}/yum_gource_tree.log &
+	mv ${DATADIR}/yum_tmp.log ${LOGNOW} &
+	rm ${DATADIR}/yum_purged.log ${DATADIR}/process.log ${DATADIR}/tmp &
 	wait
 
 	# take the existing log and remove the paths so we have our pie-like log again which I had at the beginning of the developmen process of this script :)
 	# yes, this may look stupid, first writing a package category and then removing it afterwards, but I think its faster to edit the entire file in one rush
 	# instead of writing every single line into a file
-	sed -e 's/D|.*\//D\|/' -e 's/M|.*\//M\|/' -e 's/A|.*\//A\|/' ${DATADIR}/pacman_gource_tree.log  > ${DATADIR}/pacman_gource_pie.log
+	sed -e 's/D|.*\//D\|/' -e 's/M|.*\//M\|/' -e 's/A|.*\//A\|/' ${DATADIR}/yum_gource_tree.log  > ${DATADIR}/yum_gource_pie.log
 
 
 	# how log did the script take to run?
@@ -685,6 +697,13 @@ makelog_post() {
 } # makelog_post
 
 
+
+
+
+#checksumstop
+
+
+
 help() {
 	echo -e "-n  do${WHITEUL}N${NC}'t update the log"
 	echo -e "-c  don't use ${WHITEUL}C${NC}olors for shell output"
@@ -703,16 +722,26 @@ help() {
 	echo -e "-h  show this ${WHITEUL}H${NC}elp"
 }
 
-logbeginningdate=`head -n1 ${LOGNOW} |  cut -d' ' -f1 | sed  -e 's/\[//'`
+
+logbeginningdate=`head -n1 ${LOGNOW} | sed -e '/^$/d' |  cut -d' ' -f1,2,3 | sed  -e 's/\[//'`
+
+
 logbeginning=`date +"%d %b %Y" -d "${logbeginningdate}"`
 
-logenddate=`tail -n1 ${LOGNOW} | cut -d' ' -f1 | sed  -e 's/\[//'`
+
+logenddate=`sed -e '/^$/d' ${LOGNOW} | tail -n1 | cut -d' ' -f1,2,3 | sed  -e 's/\[//'`
+
+
 logend=`date +"%d %b %Y" -d "${logenddate}"`
 
 cpucores=`getconf _NPROCESSORS_ONLN`
 
 gourcebinarypath=`whereis gource | cut -d' ' -f2`
-gourcename_version=`pacman -Qo ${gourcebinarypath} | cut -d' ' -f"5 6"`
+
+
+echo "ERROR: command not supported yet"
+# gourcename_version=`pacman -Qo ${gourcebinarypath} | cut -d' ' -f"5 6"`
+
 
 LOGTIMES=", ${logbeginning} - ${logend}"
 HOSTNAME=", hostname: `hostname`"
@@ -845,18 +874,21 @@ if [ ${INFORMATION} == "true" ] ; then
 	exit_ 0
 fi
 
-if [ ${UPDATE} == "true" ] ; then
-	makelog_pre
-	if [ ${QUIET} == "true" ] ; then
-		makelog_quiet
-	else
-		makelog
-	fi
-	makelog_post
 
-	echo -e "Output files are ${WHITEUL}${DATADIR}/pacman_gource_tree.log${NC}"
-	echo -e "\t and ${WHITEUL}${DATADIR}/pacman_gource_pie.log${NC}.\n\n"
-fi
+	if [ ${UPDATE} == "true" ] ; then
+		makelog_pre
+		if [ ${QUIET} == "true" ] ; then
+			makelog_quiet
+		else
+			makelog
+		fi
+		makelog_post
+		echo -e "Output files are ${WHITEUL}${DATADIR}/yum_gource_tree.log${NC}"
+		echo -e "\t and ${WHITEUL}${DATADIR}/yum_gource_pie.log${NC}.\n\n"
+	fi
+
+
+
 
 if [ ${GOURCEPOST} == "true" ] ; then
 	if [ ${FFMPEGPOST} == "true" ] ; then
