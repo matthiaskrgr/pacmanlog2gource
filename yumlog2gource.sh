@@ -858,7 +858,7 @@ if [ ${INFORMATION} == "true" ] ; then
 	if [ "$*" == "-i" ] ; then
 		ARGS=""
 	else
-		ARGS="`sed -e 's/i//' <( echo "${*}" )` "
+		ARGS="`echo "${*}" | sed -e 's/i//'`"
 	fi
 	echo -e "The command which will be run using ${GREEN}pacmanlog2gource ${ARGS}${NC}is"
 	if [ ${FFMPEGPOST} != "true" ] ; then
