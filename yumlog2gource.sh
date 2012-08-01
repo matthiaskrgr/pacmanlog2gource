@@ -739,7 +739,6 @@ cpucores=`getconf _NPROCESSORS_ONLN`
 gourcebinarypath=`whereis gource | cut -d' ' -f2`
 
 
-echo "ERROR: command not supported yet"
 # gourcename_version=`pacman -Qo ${gourcebinarypath} | cut -d' ' -f"5 6"`
 
 
@@ -789,6 +788,7 @@ while getopts "nchgfpaotimdlLq" opt; do
 			LOGTIMES=''
 			;;
 		"i")
+		echo "ERROR: gource version output not supported yet"
 			UPDATE="false"
 			INFORMATION="true"
 			;;
