@@ -226,8 +226,10 @@ makelog_pre() {
 
 	ORIGSIZE_OUT=`sizecalc ${ORIGSIZE}`
 
+#checksumstart
+
 	echo -e "Purging the diff (${ORIGLINES} lines, ${ORIGSIZE_OUT}) and saving the result to ${WHITEUL}${DATADIR}${NC}."
-	sed -e 's/\[/\n[/g' -e '/^$/d' ${DATADIR}/process.log | awk '/] installed|] upgraded|] removed/' > ${LOGTOBEPROCESSED}
+	sed -e 's/\[/\n[/g' -e '/^$/d' -e 's/\[PACMAN\]\ //' ${DATADIR}/process.log | awk '/] installed|] upgraded|] removed/' > ${LOGTOBEPROCESSED}
 
 	PURGEDONESIZE=`du -b ${LOGTOBEPROCESSED} | cut -f1`
 
