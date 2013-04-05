@@ -2,7 +2,7 @@
 
 
 #    pacmanlog2gource - converts a copy of /var/log/pacman.log into a format readable by gource
-#    Copyright (C) 2011-2012  Matthias Krüger
+#    Copyright (C) 2011-2013  Matthias Krüger
 
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
