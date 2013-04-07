@@ -100,7 +100,7 @@ NC='\e[0m'
 
 TIMECOUNTCOOKIE=0
 
-VERSION="2.0.1"
+VERSION="2.0.2"
 
 FILENAMES=' '
 
@@ -229,7 +229,7 @@ makelog_pre() {
 #checksumstart
 
 	echo -e "Purging the diff (${ORIGLINES} lines, ${ORIGSIZE_OUT}) and saving the result to ${WHITEUL}${DATADIR}${NC}."
-	sed -e 's/\[/\n[/g' -e '/^$/d' -e 's/\[PACMAN\]\ //' ${DATADIR}/process.log | awk '/] installed|] upgraded|] removed/' > ${LOGTOBEPROCESSED}
+	sed -e 's/\ \[.*\]//'  -e 's/\[/\n[/g' -e '/^$/d' ${DATADIR}/process.log | awk '/] installed|] upgraded|] removed/' > ${LOGTOBEPROCESSED}
 
 	PURGEDONESIZE=`du -b ${LOGTOBEPROCESSED} | cut -f1`
 
