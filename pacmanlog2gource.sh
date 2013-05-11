@@ -40,6 +40,8 @@
 
 # set -x
 
+export LANG=C
+
 
 # variables
 DATADIR=~/.pacmanlog2gource
